@@ -1,6 +1,9 @@
 package be.pir.am.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -11,6 +14,7 @@ import javax.ejb.TransactionAttributeType;
 import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.api.dao.LicenceDao;
 import be.pir.am.api.dto.AthleteDto;
+import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.AthleteEntity;
 
@@ -33,6 +37,23 @@ public class AthleteServiceImpl implements AthleteService {
 					athleteEntity.getLastname()));
 		}
 
+		return returnedList;
+	}
+
+	@Override
+	public List<AthleteDto> findAthletesByBibAndCategory(int bib, CategoryDto category) {
+		List<AthleteDto> returnedList = new ArrayList<>();
+		Short minimumAge = category.getMinimumAge();
+		Short maximumAge = category.getMaximumAge();
+		Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear()-maximumAge, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear()-minimumAge, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		
+		
+		List<AthleteEntity> results = athleteDao.findAthleteByBibAndBirthdayMinMax(String.valueOf(bib), dateMin,
+				dateMax);
+		for (AthleteEntity athleteEntity : results) {
+			returnedList.add(new AthleteDto(athleteEntity.getFirstname(), athleteEntity.getLastname()));
+		}
 		return returnedList;
 	}
 

@@ -1,6 +1,6 @@
 package be.pir.am.api.dto;
 
-public class AthleteDto {
+public class AthleteDto extends BaseDto {
 	private String firstName;
 	private String lastName;
 

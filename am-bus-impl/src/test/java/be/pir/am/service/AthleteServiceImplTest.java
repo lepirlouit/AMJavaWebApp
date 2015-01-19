@@ -9,6 +9,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 import be.pir.am.api.dto.AthleteDto;
+import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CategoryEntity;
 import be.pir.am.entities.CompetitionEntity;
@@ -44,7 +45,7 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 	public void testDependencyInjectionWithMethodInvokation() {
 		final AthleteServiceImpl toTest = this.getBeanToTest();
 		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBib(500);
-		Assert.assertEquals(9, findAthletesByBib.size());
+		Assert.assertEquals(6, findAthletesByBib.size());
 	}
 
 	public void testFindEvents() {
@@ -68,5 +69,17 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		System.out.println(competition.getStartDate());
 		System.out.println(competition.getFederation().getName());
 		System.out.println(competition.getEvents().size());
+	}
+	public void testFindAthletesByBibAndCategory() {
+		final AthleteServiceImpl toTest = this.getBeanToTest();
+		CategoryDto category = new CategoryDto();
+		category.setMinimumAge((short) 20);
+		category.setMaximumAge((short) 35);
+
+		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBibAndCategory(1997, category);
+		for (AthleteDto athleteDto : findAthletesByBib) {
+			System.out.println(athleteDto.getLastName());
+		}
+		Assert.assertEquals(1, findAthletesByBib.size());
 	}
 }
