@@ -30,6 +30,7 @@ import com.vaadin.ui.VerticalLayout;
 @Widgetset("be.pir.am.MyAppWidgetset")
 public class MyUI extends UI {
 
+	private static final long serialVersionUID = 1L;
 	private AthleteService athleteService = ServiceLocator.getInstance()
 			.getAthleteService();
 
