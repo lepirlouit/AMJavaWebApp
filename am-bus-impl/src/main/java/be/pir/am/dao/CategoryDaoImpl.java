@@ -32,4 +32,17 @@ public class CategoryDaoImpl extends AbstractEntityDao<CategoryEntity> implement
 				cb.greaterThanOrEqualTo(category.get("maximumAge"), age), cb.notEqual(category.get("maximumAge"), 0));
 		return em.createQuery(cq).getResultList();
 	}
+
+	@Override
+	public List<CategoryEntity> findAllCategoriesForDisplay(FederationEntity federation) {
+		EntityManager em = getEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		CriteriaQuery<CategoryEntity> cq = cb.createQuery(CategoryEntity.class);
+		Root<CategoryEntity> category = cq.from(CategoryEntity.class);
+		cq.where(cb.equal(category.get("federation"), federation),
+				cb.or(cb.like(category.get("name"), "% (M)"), cb.like(category.get("name"), "% (F)")),
+				cb.notLike(category.get("abbreviation"), "TC%"));
+		return em.createQuery(cq).getResultList();
+	}
 }

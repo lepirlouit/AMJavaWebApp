@@ -10,4 +10,5 @@ import be.pir.am.entities.FederationEntity;
 @Local
 public interface CategoryDao extends EntityDao<CategoryEntity> {
 	List<CategoryEntity> findCategoriesByGenderFederationAndAge(Character gender, FederationEntity federation, short age);
+	List<CategoryEntity> findAllCategoriesForDisplay(FederationEntity federation);
 }

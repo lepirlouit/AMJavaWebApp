@@ -14,6 +14,8 @@ public class CategoryEntity extends BaseEntity {
 	private Integer id;
 	@Column(length = 64)
 	private String name;
+	@Column(length = 16)
+	private String abbreviation;
 	private Short minimumAge;
 	private Short maximumAge;
 	private Character gender;

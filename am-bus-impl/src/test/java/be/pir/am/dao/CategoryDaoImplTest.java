@@ -42,4 +42,12 @@ public class CategoryDaoImplTest extends BaseSessionBeanFixture<CategoryDaoImpl>
 			Assert.assertEquals(1, findAthletesByBib.size());
 		}
 	}
+
+	public void testFindAllCategoriesForDisplay() {
+		final CategoryDaoImpl toTest = this.getBeanToTest();
+		FederationEntity federation = new FederationEntity();
+		federation.setId(10);
+		List<CategoryEntity> categories = toTest.findAllCategoriesForDisplay(federation);
+		Assert.assertEquals(18, categories.size());
+	}
 }
