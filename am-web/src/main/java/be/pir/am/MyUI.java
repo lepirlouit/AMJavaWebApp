@@ -5,7 +5,9 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 
 import be.pir.am.api.dto.AthleteDto;
+import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.service.AthleteService;
+import be.pir.am.api.service.CategoryService;
 import be.pir.am.util.ServiceLocator;
 
 import com.vaadin.annotations.Theme;
@@ -17,7 +19,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -31,39 +35,55 @@ import com.vaadin.ui.VerticalLayout;
 public class MyUI extends UI {
 
 	private static final long serialVersionUID = 1L;
-	private AthleteService athleteService = ServiceLocator.getInstance()
-			.getAthleteService();
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
+		AthleteService athleteService = ServiceLocator.getInstance()
+				.getAthleteService();
+		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
+
 		final VerticalLayout layout = new VerticalLayout();
+		layout.setSpacing(true);
 		layout.setMargin(true);
 		setContent(layout);
+		final HorizontalLayout searchForm = new HorizontalLayout();
+		searchForm.setSpacing(true);
+		layout.addComponent(searchForm);
+		
+		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
+		TextField bib = new TextField("Dossard/Bib",bibProperty);
+		bib.setNullRepresentation("");
+		ComboBox category = new ComboBox("Category");
 
-		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(0,
-				Integer.class);
-		TextField tf = new TextField("bib", bibProperty);
-		layout.addComponent(tf);
+		category.setContainerDataSource(new BeanItemContainer<CategoryDto>(CategoryDto.class, categoryService
+				.getCategoriesForLbfa()));
+		category.setItemCaptionPropertyId("name");
+
+		Button searchBtn = new Button("Search");
+		searchForm.addComponents(new FormLayout(bib), new FormLayout(category), new FormLayout(searchBtn));
+
+
 
 		Table tb = new Table();
-		tb.addContainerProperty("firstName", String.class, "");
-		tb.addContainerProperty("lastName", String.class, "");
+		tb.setVisible(false);
 		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(
 				AthleteDto.class));
+		tb.setVisibleColumns("firstName", "lastName");
 		layout.addComponent(tb);
 
-		Button button = new Button("Click Me");
-		button.addClickListener(new Button.ClickListener() {
+		searchBtn.addClickListener(new Button.ClickListener() {
+
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void buttonClick(ClickEvent event) {
-				layout.addComponent(new Label("Thank you for clicking"));
 				List<AthleteDto> athls = athleteService
 						.findAthletesByBib(bibProperty.getValue());
+				tb.setVisible(athls.size() > 0);
 				tb.removeAllItems();
 				tb.addItems(athls);
 			}
 		});
-		layout.addComponent(button);
 
 	}
 
