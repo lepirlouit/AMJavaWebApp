@@ -43,6 +43,7 @@ public class CategoryDaoImpl extends AbstractEntityDao<CategoryEntity> implement
 		cq.where(cb.equal(category.get("federation"), federation),
 				cb.or(cb.like(category.get("name"), "% (M)"), cb.like(category.get("name"), "% (F)")),
 				cb.notLike(category.get("abbreviation"), "TC%"));
+		cq.orderBy(cb.asc(category.get("minimumAge")), cb.asc(category.get("gender")));
 		return em.createQuery(cq).getResultList();
 	}
 }
