@@ -1,35 +1,29 @@
 package be.pir.am.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "countries")
 public class CountryEntity extends BaseEntity {
-	private Short id;
+	@Id
+	private Integer id;
 	private String iso;
 	private String name;
 	private String iso3;
 	private Integer numcode;
 	private String area;
 	private String iaafcode;
-	@Basic(fetch = FetchType.LAZY)
-	@Lob
-	private byte[] flag;
-	@Column(name = "ID_FOR_FEDERATION", length = 64)
+	@Column(name = "id_for_federation", length = 64)
 	private String idForFederation;
 
-	@Id
-	public Short getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Short id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -79,14 +73,6 @@ public class CountryEntity extends BaseEntity {
 
 	public void setIaafcode(String iaafcode) {
 		this.iaafcode = iaafcode;
-	}
-
-	public byte[] getFlag() {
-		return flag;
-	}
-
-	public void setFlag(byte[] flag) {
-		this.flag = flag;
 	}
 
 	public String getIdForFederation() {
