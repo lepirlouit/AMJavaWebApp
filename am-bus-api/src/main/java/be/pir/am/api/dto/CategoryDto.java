@@ -1,6 +1,6 @@
 package be.pir.am.api.dto;
 
-public class CategoryDto {
+public class CategoryDto extends BaseDto {
 	private String name, abbreviation;
 	private Short minimumAge, maximumAge;
 	private Character gender;
