@@ -39,6 +39,22 @@ public class CategoryEntity extends BaseEntity {
 		this.name = name;
 	}
 
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
+	public FederationEntity getFederation() {
+		return federation;
+	}
+
+	public void setFederation(FederationEntity federation) {
+		this.federation = federation;
+	}
+
 	public Short getMinimumAge() {
 		return minimumAge;
 	}
