@@ -15,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import be.pir.am.api.service.AthleteService;
+import be.pir.am.api.service.CategoryService;
 
 /**
  * Is used to get the facades to provide the services.
@@ -68,5 +69,9 @@ public class ServiceLocator {
 
 	public AthleteService getAthleteService() {
 		return (AthleteService) this.lookupEjb("AthleteServiceImpl");
+	}
+
+	public CategoryService getCategoryService() {
+		return (CategoryService) this.lookupEjb("CategoryServiceImpl");
 	}
 }
