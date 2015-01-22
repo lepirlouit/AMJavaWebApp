@@ -1,11 +1,16 @@
 package be.pir.am.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -31,6 +36,19 @@ public class CompetitorEntity extends BaseEntity {
 	private String bib;
 	@Column(length = 256)
 	private String displayname;
+	
+    @ManyToMany
+    @OrderColumn(name = "seqno", columnDefinition = "smallint")
+	@JoinTable(name = "participants", 
+		joinColumns = {
+			@JoinColumn(name = "competitor", referencedColumnName = "ID")
+		},
+		inverseJoinColumns = {
+			@JoinColumn(name = "participation", referencedColumnName = "ID")
+		})
+    private List<ParticipationEntity> participations;
+	
+	
 
 	public Integer getId() {
 		return id;

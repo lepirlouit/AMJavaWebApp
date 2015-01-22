@@ -7,10 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -27,6 +25,13 @@ public class ParticipationEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category")
 	private CategoryEntity categoryEntity;
+
+	/**
+	 * en général il y a toujours qu'un seul participant pour chaque
+	 * participation, sauf pour un relais
+	 */
+	@ManyToMany(mappedBy = "participations")
+	public List<CompetitorEntity> competitors;
 
 	public Integer getId() {
 		return id;
@@ -60,9 +65,5 @@ public class ParticipationEntity extends BaseEntity {
 		this.categoryEntity = categoryEntity;
 	}
 
-	/** en général il y a toujours qu'un seul participant pour chaque participation, sauf pour un relais*/
-	@ManyToMany
-	@OrderColumn(name = "seqno", columnDefinition = "smallint")
-	@JoinTable(name = "participant", joinColumns = { @JoinColumn(name = "participation", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "competitor", referencedColumnName = "ID") })
-	public List<CompetitorEntity> participants;
+
 }
