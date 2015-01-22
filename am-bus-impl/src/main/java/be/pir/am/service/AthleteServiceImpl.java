@@ -1,5 +1,6 @@
 package be.pir.am.service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ public class AthleteServiceImpl implements AthleteService {
 		List<AthleteEntity> findAthletesWithBib = licenceDao
 				.findAthletesWithBib(String.valueOf(bib));
 		for (AthleteEntity athleteEntity : findAthletesWithBib) {
-			returnedList.add(new AthleteDto(athleteEntity.getFirstname(),
-					athleteEntity.getLastname()));
+			returnedList.add(createAthleteDto(athleteEntity));
 		}
 
 		return returnedList;
@@ -52,9 +52,17 @@ public class AthleteServiceImpl implements AthleteService {
 		List<AthleteEntity> results = athleteDao.findAthleteByBibAndBirthdayMinMax(String.valueOf(bib), dateMin,
 				dateMax);
 		for (AthleteEntity athleteEntity : results) {
-			returnedList.add(new AthleteDto(athleteEntity.getFirstname(), athleteEntity.getLastname()));
+			returnedList.add(createAthleteDto(athleteEntity));
 		}
 		return returnedList;
+	}
+
+	private AthleteDto createAthleteDto(AthleteEntity athE) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		AthleteDto athDto = new AthleteDto(athE.getFirstname(), athE.getLastname());
+		athDto.setBirthdate(sdf.format(athE.getBirthdate()));
+		// TODO : setTeam (from Licence)
+		return athDto;
 	}
 
 }

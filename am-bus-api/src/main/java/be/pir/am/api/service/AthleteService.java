@@ -11,4 +11,15 @@ import be.pir.am.api.dto.CategoryDto;
 public interface AthleteService {
 	List<AthleteDto> findAthletesByBib(int bib);
 	List<AthleteDto> findAthletesByBibAndCategory(int bib, CategoryDto category);
+	List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition);
+	/**
+	 * First find the competitor for this competition, if null, create a new one
+	 * create a participation to all the rounds of the events,
+	 * 
+	 * 
+	 * 
+	 * @param competitor
+	 * @param events
+	 */
+	void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events);
 }
