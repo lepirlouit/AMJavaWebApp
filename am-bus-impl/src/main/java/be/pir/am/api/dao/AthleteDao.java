@@ -9,5 +9,5 @@ import be.pir.am.entities.AthleteEntity;
 
 @Local
 public interface AthleteDao extends EntityDao<AthleteEntity> {
-	List<AthleteEntity> findAthleteByBibAndBirthdayMinMax(String bib, Date dateMin, Date dateMax);
+	List<AthleteEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin, Date dateMax);
 }

@@ -15,15 +15,15 @@ import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.LicenceEntity;
 
 @Stateless
-public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements
-		AthleteDao {
+public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements AthleteDao {
 
 	public AthleteDaoImpl() {
 		super(AthleteEntity.class);
 	}
 
 	@Override
-	public List<AthleteEntity> findAthleteByBibAndBirthdayMinMax(String bib, Date dateMin, Date dateMax) {
+	public List<AthleteEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin,
+			Date dateMax) {
 		EntityManager em = getEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -31,7 +31,8 @@ public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements
 		Root<LicenceEntity> licence = cq.from(LicenceEntity.class);
 		Join<Object, Object> athlete = licence.join("athlete");
 		cq.select(licence.get("athlete"));
-		cq.where(cb.between(athlete.get("birthdate"), dateMin, dateMax), cb.equal(licence.get("bib"), bib));
+		cq.where(cb.between(athlete.get("birthdate"), dateMin, dateMax), cb.equal(athlete.get("gender"), gender),
+				cb.equal(licence.get("bib"), bib));
 		return em.createQuery(cq).getResultList();
 	}
 

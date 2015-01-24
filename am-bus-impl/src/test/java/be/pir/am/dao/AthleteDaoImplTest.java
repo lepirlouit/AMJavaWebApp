@@ -37,8 +37,8 @@ public class AthleteDaoImplTest extends BaseSessionBeanFixture<AthleteDaoImpl> {
 
 		Date min = Date.from(LocalDate.of(1989, 11, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 		Date max = Date.from(LocalDate.of(1989, 11, 30).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-		
-		List<AthleteEntity> findAthletesByBib = toTest.findAthleteByBibAndBirthdayMinMax("1997", min, max);
+
+		List<AthleteEntity> findAthletesByBib = toTest.findAthleteByBibGenderAndBirthdayMinMax("1997", 'W', min, max);
 		for (AthleteEntity athlete : findAthletesByBib) {
 			System.out.println(athlete.getLastname());
 		}

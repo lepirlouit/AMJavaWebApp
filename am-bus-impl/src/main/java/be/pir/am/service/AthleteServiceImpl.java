@@ -16,6 +16,8 @@ import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.api.dao.LicenceDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
+import be.pir.am.api.dto.CompetitionDto;
+import be.pir.am.api.dto.EventDto;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.AthleteEntity;
 
@@ -31,8 +33,7 @@ public class AthleteServiceImpl implements AthleteService {
 	public List<AthleteDto> findAthletesByBib(int bib) {
 
 		List<AthleteDto> returnedList = new ArrayList<>();
-		List<AthleteEntity> findAthletesWithBib = licenceDao
-				.findAthletesWithBib(String.valueOf(bib));
+		List<AthleteEntity> findAthletesWithBib = licenceDao.findAthletesWithBib(String.valueOf(bib));
 		for (AthleteEntity athleteEntity : findAthletesWithBib) {
 			returnedList.add(createAthleteDto(athleteEntity));
 		}
@@ -45,12 +46,13 @@ public class AthleteServiceImpl implements AthleteService {
 		List<AthleteDto> returnedList = new ArrayList<>();
 		Short minimumAge = category.getMinimumAge();
 		Short maximumAge = category.getMaximumAge();
-		Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear()-maximumAge, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear()-minimumAge, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-		
-		
-		List<AthleteEntity> results = athleteDao.findAthleteByBibAndBirthdayMinMax(String.valueOf(bib), dateMin,
-				dateMax);
+		Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear() - maximumAge, 1, 1).atStartOfDay()
+				.atZone(ZoneId.systemDefault()).toInstant());
+		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 1, 1).atStartOfDay()
+				.atZone(ZoneId.systemDefault()).toInstant());
+
+		List<AthleteEntity> results = athleteDao.findAthleteByBibGenderAndBirthdayMinMax(String.valueOf(bib),
+				category.getGender(), dateMin, dateMax);
 		for (AthleteEntity athleteEntity : results) {
 			returnedList.add(createAthleteDto(athleteEntity));
 		}
@@ -63,6 +65,18 @@ public class AthleteServiceImpl implements AthleteService {
 		athDto.setBirthdate(sdf.format(athE.getBirthdate()));
 		// TODO : setTeam (from Licence)
 		return athDto;
+	}
+
+	@Override
+	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
