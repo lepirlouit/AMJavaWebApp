@@ -3,6 +3,7 @@ package be.pir.am.api.dao;
 import java.util.List;
 
 import be.pir.am.entities.BaseEntity;
+import java.lang.Number;
 
 /**
  *

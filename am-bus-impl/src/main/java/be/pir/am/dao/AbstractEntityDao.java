@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 
 import be.pir.am.api.dao.EntityDao;
 import be.pir.am.entities.BaseEntity;
-
+import java.lang.Number;
 /**
  * AbstractEntityRepository
  *
