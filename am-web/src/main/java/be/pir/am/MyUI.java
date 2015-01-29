@@ -22,6 +22,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -77,9 +78,14 @@ public class MyUI extends UI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				List<AthleteDto> athls = athleteService
-						.findAthletesByBib(bibProperty.getValue());
-				tb.setVisible(athls.size() > 0);
+				List<AthleteDto> athls = athleteService.findAthletesByBibAndCategory(bibProperty.getValue(),
+						(CategoryDto) category.getValue());
+				boolean foundAth = athls.size() > 0;
+				if (!foundAth) {
+					Notification.show("Not Found"); // TODO : atheletes non
+													// trouve, create new.
+				}
+				tb.setVisible(foundAth);
 				tb.removeAllItems();
 				tb.addItems(athls);
 			}

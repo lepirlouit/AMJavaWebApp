@@ -33,6 +33,9 @@ public class CategoryServiceImpl implements CategoryService {
 			category.setAbbreviation(categoryEntity.getAbbreviation());
 			category.setName(categoryEntity.getName());
 			category.setId(categoryEntity.getId());
+			category.setGender(categoryEntity.getGender());
+			category.setMinimumAge(categoryEntity.getMinimumAge());
+			category.setMaximumAge(categoryEntity.getMaximumAge());
 			returnedList.add(category);
 		}
 		return returnedList;
