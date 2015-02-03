@@ -23,6 +23,12 @@
 		</dependency>
 		<dependency>
 			<groupId>be.pir</groupId>
+			<artifactId>am-web-wicket</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>be.pir</groupId>
 			<artifactId>am-bus-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -45,6 +51,11 @@
 							<groupId>${project.groupId}</groupId>
 							<artifactId>am-web</artifactId>
 							<contextRoot>/am-web</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>am-web-wicket</artifactId>
+							<contextRoot>/am-web-wicket</contextRoot>
 						</webModule>
 					</modules>
 				</configuration>
