@@ -36,10 +36,26 @@
 		<wtp.version>none</wtp.version>
 	</properties>
 	<dependencies>
+		<!--  Project DEPENDENCIES -->
+		<dependency>
+			<groupId>be.pir</groupId>
+			<artifactId>am-bus-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<!--  WICKET DEPENDENCIES -->
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-core</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-javaee-inject</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
 		<!-- OPTIONAL DEPENDENCY
