@@ -31,7 +31,7 @@
 	</filter-mapping>
 	
 	<ejb-local-ref>
-		<ejb-ref-name>AthleteServiceImpl</ejb-ref-name>
+		<ejb-ref-name>be.pir.am.api.service.AthleteService</ejb-ref-name>
 		<local>be.pir.am.api.service.AthleteService</local>
 		<ejb-link>AthleteServiceImpl</ejb-link>
 	</ejb-local-ref>
