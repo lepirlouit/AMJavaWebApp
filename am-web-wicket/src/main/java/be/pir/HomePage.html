@@ -2,60 +2,131 @@
 <html xmlns:wicket="http://wicket.apache.org">
 	<head>
 		<meta charset="utf-8" />
-		<title>Apache Wicket Quickstart</title>
+		<title>Inscription Royal Racing Club de Bruxelles (LBFA)</title>
 		<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular,bold' rel='stylesheet' type='text/css' />
+		<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="style.css" type="text/css" media="screen" title="Stylesheet" />
 	</head>
 	<body>
 		<div id="hd">
 			<div id="logo">
 				<img src="logo.png" width="50px" height="50px" alt="Wicket Logo" />
-				<h1>Apache Wicket</h1>
+				<h1>Inscription Comp&eacute;tition</h1>
 			</div>
 		</div>
 		<div id="bd">
-			<h2>Congratulations!</h2>
-			<p>
-				Your quick start works! This project is especially useful to
-                start developing your Wicket application or to create a test
-                case for a bug report.
-			</p>
-			<h3>Get started</h3>
-			<p>
-				You can even <a href="https://localhost:8443">switch to HTTPS</a>!
-			</p> 
-			<p>
-				From here you can start hacking away at your application and
-                wow your clients:
-			</p>
-			<ul>
-				<li>work through <a href="http://wicket.apache.org/learn/examples" target="_blank" title="Hello world and friends">some examples</a></li>
-				<li>read <a href="http://wicket.apache.org/learn/books" target="_blank" title="Books about Wicket in English, German and Japanese">some books</a></li>
-				<li>find <a href="http://wicket.apache.org/learn/projects" target="_blank" title="Additional projects, components and libraries">additional components, projects and libraries</a></li>
-			</ul>
-			<h3>Get help</h3>
-			<p>
-				We are here to help!
-			</p>
-			<ul>
-				<li>join us on IRC on <a href="irc:%23%23wicket@irc.freenode.net">&#35;&#35;wicket@irc.freenode.net</a></li>
-				<li><a href="http://wicket-users.markmail.org/" target="_blank" title="Search the mailing list archives">search</a> our mailing list archives</li>
-				<li>ask a question on the <a href="http://wicket.apache.org/help/email.html">users list</a></li>
-			</ul>
-			<h3>Reporting a bug</h3>
-			<p>
-				Help us help you:
-			</p>
-			<ol>
-				<li>reproduce the bug with the <strong>least</strong> amount of code</li>
-				<li>create a unit test that shows the bug</li>
-				<li>fix the bug and create a patch</li>
-				<li>attach the result of step 1, 2 or 3 to a <a href="https://issues.apache.org/jira/browse/WICKET" target="_blank">JIRA issue</a></li>
-				<li>profit!</li>
-			</ol>
-			<p>
-				Please mention the correct Wicket version: <wicket:container wicket:id="version">1.5-SNAPSHOT</wicket:container>.
-			</p>
+				<div class="row">
+  <div class="col-xs-6 col-md-4">
+			<form wicket:id="form" class="form-inline">
+  <div class="form-group">
+    <label for="dossard">Dossard</label>
+    <input type="text" class="form-control" id="dossard" placeholder="9999">
+  </div>
+  <div class="form-group">
+    <label for="categorie">Cat&eacute;gorie</label>
+    <select class="form-control" id="categorie" placeholder="Select one">
+	  <option>Minime</option>
+	  <option>Pupille</option>
+	  <option>Benjamin</option>
+	  <option>Senior</option>
+	  <option>Master</option>
+	</select>
+  </div>
+  <!-- <div class="form-group">
+    <label for="exampleInputEmail2">Email</label>
+    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+  </div>-->
+  <button type="submit" class="btn btn-default">Rechercher</button>
+			</form>
+
+	<table class="table table-striped table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Username</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Jacob</td>
+          <td>Thornton</td>
+          <td>@fat</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>Larry</td>
+          <td>the Bird</td>
+          <td>@twitter</td>
+        </tr>
+      </tbody>
+    </table>
+   </div>
+  <div class="col-xs-12 col-sm-6 col-md-8">
+                <form class="form-inline" role="form" action="confirm.php" method="post">
+                        <input type="hidden" name="nom" value="<?php echo $_SESSION['user']['nom'] ;?>"/>
+                        <input type="hidden" name="dossard" value="<?php echo $_SESSION['user']['dossart']?>"/>
+                        <input type="hidden" name="categorie" value="<?php echo $_SESSION['user']['cat']?>"/>
+
+
+					<div class="row">
+						<div class="form-group col-xs-6 col-sm-8">
+							<label class="sr-only" for="nomprenom">Nom, Pr&eacute;nom</label>
+							<input readonly=readonly type="text" class="form-control"
+								id="nomprenom" name="nomprenom" placeholder="Nom, Pr&eacute;nom"
+								maxlength="125" style="width: 100%"
+								value="9999 - Alpha Betha - 26-01-2005 - RRCB">
+						</div>
+					</div>
+					<div class="row">
+
+                                <div class="col-xs-12">
+                                <h3>Epreuves du jour</h3>
+<i>Format pour les meilleures performances: 12.3 - 12.34 - 4.32.1 - 4.32.10</i>
+
+<div class="row">
+<div class="col-xs-1" ><input type="checkbox" ></div><span class="col-xs-3">Saut en Longueur</span>
+</div>
+
+ <div class="row"> 
+<div class="col-xs-1" ><input type="checkbox" ></div><span class="col-xs-3">400m</span>
+<input type="text" class="form-control input-sm">(meilleure performance)
+</div>
+
+ <div class="row">
+<div class="col-xs-1" ><input type="checkbox" ></div><span class="col-xs-3">10 km</span>
+<input type="text" class="form-control input-sm">(meilleure performance)
+</div>
+  
+  <div class="form-group">
+    <div class="input-group">
+      <div class="input-group-addon">@</div>
+      <input class="form-control " type="email" placeholder="Adresse email" name="email" size="75">
+    </div>
+  </div><br/>
+  <div class="row">
+  <div class="col-xs-12">
+<input type="submit" class="btn btn-success" value="Envoyer"/>
+</div></div>
+                                </div>
+
+                        </div>
+                </form>
+
+
+
+
+</div>
+</div>
 		</div>
 		<div id="ft">
 		</div>
