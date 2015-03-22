@@ -31,7 +31,7 @@ public class ParticipationEntity extends BaseEntity {
 	 * participation, sauf pour un relais
 	 */
 	@ManyToMany(mappedBy = "participations")
-	public List<CompetitorEntity> competitors;
+	private List<CompetitorEntity> competitors;
 
 	public Integer getId() {
 		return id;
