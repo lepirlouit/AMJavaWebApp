@@ -13,13 +13,20 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import be.pir.am.api.dao.AthleteDao;
-import be.pir.am.api.dao.LicenceDao;
+import be.pir.am.api.dao.CompetitorDao;
+import be.pir.am.api.dao.EventDao;
+import be.pir.am.api.dao.LicenseDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
 import be.pir.am.api.dto.EventDto;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.AthleteEntity;
+import be.pir.am.entities.CompetitorEntity;
+import be.pir.am.entities.EventEntity;
+import be.pir.am.entities.LicenseEntity;
+import be.pir.am.entities.ParticipationEntity;
+import be.pir.am.entities.RoundEntity;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -27,13 +34,17 @@ public class AthleteServiceImpl implements AthleteService {
 	@EJB
 	private AthleteDao athleteDao;
 	@EJB
-	private LicenceDao licenceDao;
+	private LicenseDao licenseDao;
+	@EJB
+	private EventDao eventDao;
+	@EJB
+	private CompetitorDao competitorDao;
 
 	@Override
 	public List<AthleteDto> findAthletesByBib(int bib) {
 
 		List<AthleteDto> returnedList = new ArrayList<>();
-		List<AthleteEntity> findAthletesWithBib = licenceDao.findAthletesWithBib(String.valueOf(bib));
+		List<AthleteEntity> findAthletesWithBib = licenseDao.findAthletesWithBib(String.valueOf(bib));
 		for (AthleteEntity athleteEntity : findAthletesWithBib) {
 			returnedList.add(createAthleteDto(athleteEntity));
 		}
@@ -63,7 +74,7 @@ public class AthleteServiceImpl implements AthleteService {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		AthleteDto athDto = new AthleteDto(athE.getFirstname(), athE.getLastname());
 		athDto.setBirthdate(sdf.format(athE.getBirthdate()));
-		// TODO : setTeam (from Licence)
+		// TODO : setTeam (from License)
 		return athDto;
 	}
 
@@ -74,9 +85,22 @@ public class AthleteServiceImpl implements AthleteService {
 	}
 
 	@Override
-	public void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events) {
-		// TODO Auto-generated method stub
-
+	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CompetitionDto competition) {
+		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);;
+		if (competitor==null){
+			competitor=new CompetitorEntity();
+			AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
+			competitor.setAthlete(athleteEntity);
+		}
+		for (EventDto event : events) {
+			EventEntity eventEntity = eventDao.findById(event.getId());
+			for (RoundEntity round : eventEntity.getRounds()) {
+				ParticipationEntity participation = new ParticipationEntity();
+				participation.setRound(round);
+				competitor.getParticipations().add(participation);
+			}
+		}
+		competitorDao.save(competitor);
 	}
 
 }

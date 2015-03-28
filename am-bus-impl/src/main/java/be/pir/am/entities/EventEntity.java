@@ -26,7 +26,7 @@ public class EventEntity extends BaseEntity {
 	private String name;
 	@ManyToMany
 	@JoinTable(name = "eventcategories", joinColumns = { @JoinColumn(name = "event", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "category", referencedColumnName = "ID") })
-	private List<CategoryEntity> categories;
+	private Set<CategoryEntity> categories;
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn(name = "event")
 	private Set<RoundEntity> rounds;
@@ -55,11 +55,11 @@ public class EventEntity extends BaseEntity {
 		this.name = name;
 	}
 
-	public List<CategoryEntity> getCategories() {
+	public Set<CategoryEntity> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<CategoryEntity> categories) {
+	public void setCategories(Set<CategoryEntity> categories) {
 		this.categories = categories;
 	}
 

@@ -5,9 +5,9 @@ import java.util.List;
 import javax.ejb.Local;
 
 import be.pir.am.entities.AthleteEntity;
-import be.pir.am.entities.LicenceEntity;
+import be.pir.am.entities.LicenseEntity;
 
 @Local
-public interface LicenceDao extends EntityDao<LicenceEntity> {
+public interface LicenseDao extends EntityDao<LicenseEntity> {
 	List<AthleteEntity> findAthletesWithBib(String bib);
 }

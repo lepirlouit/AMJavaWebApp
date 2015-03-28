@@ -2,6 +2,7 @@ package be.pir.am.entities;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,8 +27,8 @@ public class CompetitorEntity extends BaseEntity {
 	private AthleteEntity athlete;
 	@Null
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "licence")
-	private LicenceEntity licence;
+	@JoinColumn(name = "license")
+	private LicenseEntity license;
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "competition")
@@ -37,7 +38,7 @@ public class CompetitorEntity extends BaseEntity {
 	@Column(length = 256)
 	private String displayname;
 	
-    @ManyToMany
+    @ManyToMany(cascade=CascadeType.ALL)
     @OrderColumn(name = "seqno", columnDefinition = "smallint")
 	@JoinTable(name = "participants", 
 		joinColumns = {
@@ -66,12 +67,12 @@ public class CompetitorEntity extends BaseEntity {
 		this.athlete = athlete;
 	}
 
-	public LicenceEntity getLicence() {
-		return licence;
+	public LicenseEntity getLicense() {
+		return license;
 	}
 
-	public void setLicence(LicenceEntity licence) {
-		this.licence = licence;
+	public void setLicense(LicenseEntity license) {
+		this.license = license;
 	}
 
 	public CompetitionEntity getCompetition() {
@@ -96,6 +97,14 @@ public class CompetitorEntity extends BaseEntity {
 
 	public void setDisplayname(String displayname) {
 		this.displayname = displayname;
+	}
+
+	public List<ParticipationEntity> getParticipations() {
+		return participations;
+	}
+
+	public void setParticipations(List<ParticipationEntity> participations) {
+		this.participations = participations;
 	}
 
 }

@@ -34,6 +34,14 @@ public class CompetitionEntity extends BaseEntity {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "competition")
 	private Set<EventEntity> events;
 
+	public CompetitionEntity() {
+	}
+
+	public CompetitionEntity(Integer id) {
+		super();
+		this.id = id;
+	}
+
 	public Integer getId() {
 		return id;
 	}

@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "licenses")
-public class LicenceEntity extends BaseEntity {
+public class LicenseEntity extends BaseEntity {
 	@Id
 	private Integer id;
 	@ManyToOne(fetch = FetchType.LAZY)

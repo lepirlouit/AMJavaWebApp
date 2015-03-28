@@ -17,7 +17,7 @@ import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.CountryEntity;
 import be.pir.am.entities.EventEntity;
 import be.pir.am.entities.FederationEntity;
-import be.pir.am.entities.LicenceEntity;
+import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
 import be.pir.am.entities.RoundEntity;
 import be.pir.am.entities.TeamEntity;
@@ -25,7 +25,7 @@ import be.pir.am.entities.TeamEntity;
 import com.bm.testsuite.BaseSessionBeanFixture;
 
 public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServiceImpl> {
-	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenceEntity.class,
+	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
 			TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
 			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class };
 

@@ -16,8 +16,10 @@ import javax.persistence.TemporalType;
 @Table(name = "athletes")
 public class AthleteEntity extends BaseEntity {
 	@Id
-	//    @SequenceGenerator(name = "SEQ_CORREG_DETECTIE_ID", sequenceName = "SEQ_CORREG_DETECTIE_ID", allocationSize = 1)
-	//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CORREG_DETECTIE_ID")
+	// @SequenceGenerator(name = "SEQ_CORREG_DETECTIE_ID", sequenceName =
+	// "SEQ_CORREG_DETECTIE_ID", allocationSize = 1)
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
+	// "SEQ_CORREG_DETECTIE_ID")
 	private Integer id;
 	private String firstname;
 	private String lastname;
@@ -29,6 +31,14 @@ public class AthleteEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "nationality")
 	private CountryEntity nationality;
+
+	public AthleteEntity() {
+	}
+
+	public AthleteEntity(Integer id) {
+		super();
+		this.id = id;
+	}
 
 	public Integer getId() {
 		return id;

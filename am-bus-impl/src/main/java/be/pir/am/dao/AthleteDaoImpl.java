@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 
 import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.entities.AthleteEntity;
-import be.pir.am.entities.LicenceEntity;
+import be.pir.am.entities.LicenseEntity;
 
 @Stateless
 public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements AthleteDao {
@@ -28,11 +28,11 @@ public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		CriteriaQuery<AthleteEntity> cq = cb.createQuery(AthleteEntity.class);
-		Root<LicenceEntity> licence = cq.from(LicenceEntity.class);
-		Join<Object, Object> athlete = licence.join("athlete");
-		cq.select(licence.get("athlete"));
+		Root<LicenseEntity> license = cq.from(LicenseEntity.class);
+		Join<Object, Object> athlete = license.join("athlete");
+		cq.select(license.get("athlete"));
 		cq.where(cb.between(athlete.get("birthdate"), dateMin, dateMax), cb.equal(athlete.get("gender"), gender),
-				cb.equal(licence.get("bib"), bib));
+				cb.equal(license.get("bib"), bib));
 		return em.createQuery(cq).getResultList();
 	}
 

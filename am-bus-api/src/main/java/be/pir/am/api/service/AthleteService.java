@@ -26,5 +26,5 @@ public interface AthleteService {
 	 * @param competitor
 	 * @param events
 	 */
-	void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events);
+	void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events, CompetitionDto competition);
 }
