@@ -5,5 +5,5 @@ C:\Users\Benoit\AppData\Local\TimeTronics\AthleticsManager Server\data\pg_hba.co
 C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pgAdmin3.exe
 
 #start/stop the database :
-pg_ctl start -D "C:\Users\Benoit\AppData\Local\TimeTronics\AthleticsManager Server\data"
+C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pg_ctl start -D "C:\Users\Benoit\AppData\Local\TimeTronics\AthleticsManager Server\data"
 pg_ctl stop
