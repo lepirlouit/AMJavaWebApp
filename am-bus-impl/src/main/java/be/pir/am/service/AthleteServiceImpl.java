@@ -24,7 +24,6 @@ import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.EventEntity;
-import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
 import be.pir.am.entities.RoundEntity;
 
@@ -86,11 +85,12 @@ public class AthleteServiceImpl implements AthleteService {
 
 	@Override
 	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CompetitionDto competition) {
-		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);;
-		if (competitor==null){
-			competitor=new CompetitorEntity();
+		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
+		if (competitor == null) {
+			competitor = new CompetitorEntity();
 			AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
 			competitor.setAthlete(athleteEntity);
+			competitor.setParticipations(new ArrayList<>());
 		}
 		for (EventDto event : events) {
 			EventEntity eventEntity = eventDao.findById(event.getId());

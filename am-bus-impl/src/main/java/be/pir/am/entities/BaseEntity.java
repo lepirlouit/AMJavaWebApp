@@ -3,6 +3,7 @@ package be.pir.am.entities;
 import java.util.Date;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
@@ -12,7 +13,7 @@ import javax.persistence.TemporalType;
 @MappedSuperclass
 public class BaseEntity {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date since;

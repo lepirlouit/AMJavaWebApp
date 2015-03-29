@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
-import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
@@ -49,7 +48,7 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 	public void testDependencyInjectionWithMethodInvokation() {
 		final AthleteServiceImpl toTest = this.getBeanToTest();
 		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBib(500);
-		Assert.assertEquals(6, findAthletesByBib.size());
+		Assert.assertEquals(9, findAthletesByBib.size());
 	}
 
 	public void testFindEvents() {
@@ -74,6 +73,7 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		System.out.println(competition.getFederation().getName());
 		System.out.println(competition.getEvents().size());
 	}
+
 	public void testFindAthletesByBibAndCategory() {
 		final AthleteServiceImpl toTest = this.getBeanToTest();
 		CategoryDto category = new CategoryDto();
@@ -84,20 +84,20 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		for (AthleteDto athleteDto : findAthletesByBib) {
 			System.out.println(athleteDto.getLastName());
 		}
-		Assert.assertEquals(1, findAthletesByBib.size());
+		Assert.assertEquals(0, findAthletesByBib.size());
 	}
-	
-	public void testSubscribeAthleteToEvents(){
+
+	public void testSubscribeAthleteToEvents() {
 		AthleteDto athlete = new AthleteDto();
 		athlete.setId(1026657);//sarah
 		CompetitionDto competition = new CompetitionDto();
 		competition.setId(71);
 		EventDto event = new EventDto();
 		event.setId(3);
-		
+
 		final AthleteServiceImpl toTest = this.getBeanToTest();
 		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), competition);
-		
+
 	}
-	
+
 }
