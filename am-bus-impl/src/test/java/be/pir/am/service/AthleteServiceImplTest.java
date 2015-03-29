@@ -5,11 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
+import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
+import be.pir.am.api.dto.CompetitionDto;
+import be.pir.am.api.dto.EventDto;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CategoryEntity;
 import be.pir.am.entities.CompetitionEntity;
@@ -82,4 +86,18 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		}
 		Assert.assertEquals(1, findAthletesByBib.size());
 	}
+	
+	public void testSubscribeAthleteToEvents(){
+		AthleteDto athlete = new AthleteDto();
+		athlete.setId(1026657);//sarah
+		CompetitionDto competition = new CompetitionDto();
+		competition.setId(71);
+		EventDto event = new EventDto();
+		event.setId(3);
+		
+		final AthleteServiceImpl toTest = this.getBeanToTest();
+		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), competition);
+		
+	}
+	
 }
