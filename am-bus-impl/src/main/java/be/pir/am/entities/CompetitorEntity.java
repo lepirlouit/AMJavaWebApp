@@ -6,7 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -19,8 +18,6 @@ import javax.validation.constraints.Null;
 @Entity
 @Table(name = "competitors")
 public class CompetitorEntity extends BaseEntity {
-	@Id
-	private Integer id;
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "athlete")
@@ -37,27 +34,11 @@ public class CompetitorEntity extends BaseEntity {
 	private String bib;
 	@Column(length = 256)
 	private String displayname;
-	
-    @ManyToMany(cascade=CascadeType.ALL)
-    @OrderColumn(name = "seqno", columnDefinition = "smallint")
-	@JoinTable(name = "participants", 
-		joinColumns = {
-			@JoinColumn(name = "competitor", referencedColumnName = "ID")
-		},
-		inverseJoinColumns = {
-			@JoinColumn(name = "participation", referencedColumnName = "ID")
-		})
-    private List<ParticipationEntity> participations;
-	
-	
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	@ManyToMany(cascade = CascadeType.ALL)
+	@OrderColumn(name = "seqno", columnDefinition = "smallint")
+	@JoinTable(name = "participants", joinColumns = { @JoinColumn(name = "competitor", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "participation", referencedColumnName = "ID") })
+	private List<ParticipationEntity> participations;
 
 	public AthleteEntity getAthlete() {
 		return athlete;

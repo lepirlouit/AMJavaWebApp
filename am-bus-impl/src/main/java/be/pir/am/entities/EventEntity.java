@@ -1,12 +1,10 @@
 package be.pir.am.entities;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -17,8 +15,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "events")
 public class EventEntity extends BaseEntity {
-	@Id
-	private Integer id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "competition", nullable = false)
 	private CompetitionEntity competition;
@@ -30,14 +26,6 @@ public class EventEntity extends BaseEntity {
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn(name = "event")
 	private Set<RoundEntity> rounds;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public CompetitionEntity getCompetition() {
 		return competition;

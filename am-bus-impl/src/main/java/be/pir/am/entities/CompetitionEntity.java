@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -18,8 +17,6 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "competitions")
 public class CompetitionEntity extends BaseEntity {
-	@Id
-	private Integer id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "federation")
 	private FederationEntity federation;
@@ -38,16 +35,7 @@ public class CompetitionEntity extends BaseEntity {
 	}
 
 	public CompetitionEntity(Integer id) {
-		super();
-		this.id = id;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
+		super(id);
 	}
 
 	public FederationEntity getFederation() {

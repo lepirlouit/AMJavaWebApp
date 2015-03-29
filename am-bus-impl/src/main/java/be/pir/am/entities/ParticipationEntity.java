@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -14,8 +13,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "participations")
 public class ParticipationEntity extends BaseEntity {
-	@Id
-	private Integer id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "round")
 	private RoundEntity round;
@@ -32,14 +29,6 @@ public class ParticipationEntity extends BaseEntity {
 	 */
 	@ManyToMany(mappedBy = "participations")
 	private List<CompetitorEntity> competitors;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public RoundEntity getRound() {
 		return round;
@@ -64,6 +53,5 @@ public class ParticipationEntity extends BaseEntity {
 	public void setCategoryEntity(CategoryEntity categoryEntity) {
 		this.categoryEntity = categoryEntity;
 	}
-
 
 }

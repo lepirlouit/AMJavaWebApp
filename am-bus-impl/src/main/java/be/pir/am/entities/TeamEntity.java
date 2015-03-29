@@ -3,7 +3,6 @@ package be.pir.am.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -11,8 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teams")
 public class TeamEntity extends BaseEntity {
-	@Id
-	private Integer id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "federation")
 	private FederationEntity federation;
@@ -24,14 +22,6 @@ public class TeamEntity extends BaseEntity {
 	private String federationNumber;
 	@Column(length = 64)
 	private String place;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public FederationEntity getFederation() {
 		return federation;

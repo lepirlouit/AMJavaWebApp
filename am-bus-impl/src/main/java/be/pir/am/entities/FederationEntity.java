@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -18,8 +17,6 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "federations")
 public class FederationEntity extends BaseEntity {
-	@Id
-	private Integer id;
 	@Column(length = 16)
 	private String code;
 	@Column(length = 8)
@@ -54,14 +51,6 @@ public class FederationEntity extends BaseEntity {
 	private Integer recordsCurrentVersion;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "federation")
 	private List<CategoryEntity> categories;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public String getCode() {
 		return code;

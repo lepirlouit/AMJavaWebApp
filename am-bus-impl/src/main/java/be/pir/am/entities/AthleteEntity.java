@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,12 +14,6 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "athletes")
 public class AthleteEntity extends BaseEntity {
-	@Id
-	// @SequenceGenerator(name = "SEQ_CORREG_DETECTIE_ID", sequenceName =
-	// "SEQ_CORREG_DETECTIE_ID", allocationSize = 1)
-	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
-	// "SEQ_CORREG_DETECTIE_ID")
-	private Integer id;
 	private String firstname;
 	private String lastname;
 	private String middlename;
@@ -36,16 +29,7 @@ public class AthleteEntity extends BaseEntity {
 	}
 
 	public AthleteEntity(Integer id) {
-		super();
-		this.id = id;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
+		super(id);
 	}
 
 	public String getFirstname() {

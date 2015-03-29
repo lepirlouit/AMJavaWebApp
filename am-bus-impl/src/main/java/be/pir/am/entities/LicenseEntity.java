@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,8 +14,6 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "licenses")
 public class LicenseEntity extends BaseEntity {
-	@Id
-	private Integer id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "athlete")
 	private AthleteEntity athlete;
@@ -35,14 +32,6 @@ public class LicenseEntity extends BaseEntity {
 	private String ipcclass_field;
 	@Column(name = "id_for_federation", length = 64)
 	private String id_for_federation;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public AthleteEntity getAthlete() {
 		return athlete;
