@@ -33,6 +33,13 @@ public class LicenseEntity extends BaseEntity {
 	@Column(name = "id_for_federation", length = 64)
 	private String id_for_federation;
 
+	public LicenseEntity() {
+	}
+
+	public LicenseEntity(Integer id) {
+		super(id);
+	}
+
 	public AthleteEntity getAthlete() {
 		return athlete;
 	}

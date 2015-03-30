@@ -1,11 +1,14 @@
 package be.pir.am;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
+import be.pir.am.api.dto.CompetitionDto;
+import be.pir.am.api.dto.EventDto;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.api.service.CategoryService;
 import be.pir.am.util.ServiceLocator;
@@ -54,14 +57,14 @@ public class MyUI extends UI {
 		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
 		TextField bib = new TextField("Dossard/Bib",bibProperty);
 		bib.setNullRepresentation("");
-		ComboBox category = new ComboBox("Category");
+		ComboBox cbxCategory = new ComboBox("Category");
 
-		category.setContainerDataSource(new BeanItemContainer<CategoryDto>(CategoryDto.class, categoryService
+		cbxCategory.setContainerDataSource(new BeanItemContainer<CategoryDto>(CategoryDto.class, categoryService
 				.getCategoriesForLbfa()));
-		category.setItemCaptionPropertyId("name");
+		cbxCategory.setItemCaptionPropertyId("name");
 
 		Button searchBtn = new Button("Search");
-		searchForm.addComponents(new FormLayout(bib), new FormLayout(category), new FormLayout(searchBtn));
+		searchForm.addComponents(new FormLayout(bib), new FormLayout(cbxCategory), new FormLayout(searchBtn));
 
 
 
@@ -77,9 +80,20 @@ public class MyUI extends UI {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void buttonClick(ClickEvent event) {
+			public void buttonClick(ClickEvent clevent) {
+				AthleteDto athlete = new AthleteDto();
+				athlete.setId(1026657);//sarah
+				CompetitionDto competition = new CompetitionDto();
+				competition.setId(71);
+				EventDto event = new EventDto();
+				event.setId(3);
+CategoryDto category = new CategoryDto();
+category.setId(58);
+				
+				athleteService.subscribeAthleteToEvents(athlete, Arrays.asList(event),category , competition);
+				
 				List<AthleteDto> athls = athleteService.findAthletesByBibAndCategory(bibProperty.getValue(),
-						(CategoryDto) category.getValue());
+						(CategoryDto) cbxCategory.getValue());
 				boolean foundAth = athls.size() > 0;
 				if (!foundAth) {
 					Notification.show("Not Found"); // TODO : atheletes non

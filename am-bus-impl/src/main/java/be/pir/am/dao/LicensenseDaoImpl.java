@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import be.pir.am.api.dao.LicenseDao;
-import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.LicenseEntity;
 
 @Stateless
@@ -19,12 +18,12 @@ public class LicensenseDaoImpl extends AbstractEntityDao<LicenseEntity>
 	}
 
 	@Override
-	public List<AthleteEntity> findAthletesWithBib(String bib) {
+	public List<LicenseEntity> findAthletesWithBib(String bib) {
 		EntityManager em = this.getEntityManager();
-		TypedQuery<AthleteEntity> query = em
+		TypedQuery<LicenseEntity> query = em
 				.createQuery(
-						"select distinct a from LicenseEntity l inner join l.athlete a where l.bib like :bib",
-						AthleteEntity.class);
+						"select l from LicenseEntity l inner join l.athlete a where l.bib like :bib",
+						LicenseEntity.class);
 		query.setParameter("bib", bib);
 		return query.getResultList();
 	}

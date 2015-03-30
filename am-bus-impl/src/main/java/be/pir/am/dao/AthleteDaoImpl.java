@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import be.pir.am.api.dao.AthleteDao;
@@ -22,15 +23,15 @@ public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements 
 	}
 
 	@Override
-	public List<AthleteEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin,
+	public List<LicenseEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin,
 			Date dateMax) {
 		EntityManager em = getEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
-		CriteriaQuery<AthleteEntity> cq = cb.createQuery(AthleteEntity.class);
+		CriteriaQuery<LicenseEntity> cq = cb.createQuery(LicenseEntity.class);
 		Root<LicenseEntity> license = cq.from(LicenseEntity.class);
-		Join<Object, Object> athlete = license.join("athlete");
-		cq.select(license.get("athlete"));
+		Join<Object, Object> athlete = license.join("athlete",JoinType.LEFT);
+//		cq.select(license.get("athlete"));
 		cq.where(cb.between(athlete.get("birthdate"), dateMin, dateMax), cb.equal(athlete.get("gender"), gender),
 				cb.equal(license.get("bib"), bib));
 		return em.createQuery(cq).getResultList();

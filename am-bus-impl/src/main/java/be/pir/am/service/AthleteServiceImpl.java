@@ -22,8 +22,11 @@ import be.pir.am.api.dto.CompetitionDto;
 import be.pir.am.api.dto.EventDto;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.AthleteEntity;
+import be.pir.am.entities.CategoryEntity;
+import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.EventEntity;
+import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
 import be.pir.am.entities.RoundEntity;
 
@@ -43,8 +46,8 @@ public class AthleteServiceImpl implements AthleteService {
 	public List<AthleteDto> findAthletesByBib(int bib) {
 
 		List<AthleteDto> returnedList = new ArrayList<>();
-		List<AthleteEntity> findAthletesWithBib = licenseDao.findAthletesWithBib(String.valueOf(bib));
-		for (AthleteEntity athleteEntity : findAthletesWithBib) {
+		List<LicenseEntity> findAthletesWithBib = licenseDao.findAthletesWithBib(String.valueOf(bib));
+		for (LicenseEntity athleteEntity : findAthletesWithBib) {
 			returnedList.add(createAthleteDto(athleteEntity));
 		}
 
@@ -61,18 +64,24 @@ public class AthleteServiceImpl implements AthleteService {
 		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 1, 1).atStartOfDay()
 				.atZone(ZoneId.systemDefault()).toInstant());
 
-		List<AthleteEntity> results = athleteDao.findAthleteByBibGenderAndBirthdayMinMax(String.valueOf(bib),
+		List<LicenseEntity> results = athleteDao.findAthleteByBibGenderAndBirthdayMinMax(String.valueOf(bib),
 				category.getGender(), dateMin, dateMax);
-		for (AthleteEntity athleteEntity : results) {
+		for (LicenseEntity athleteEntity : results) {
 			returnedList.add(createAthleteDto(athleteEntity));
 		}
 		return returnedList;
 	}
 
-	private AthleteDto createAthleteDto(AthleteEntity athE) {
+	private AthleteDto createAthleteDto(LicenseEntity license) {
+		AthleteEntity athlete=license.getAthlete();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		AthleteDto athDto = new AthleteDto(athE.getFirstname(), athE.getLastname());
-		athDto.setBirthdate(sdf.format(athE.getBirthdate()));
+		AthleteDto athDto = new AthleteDto(athlete.getFirstname(), athlete.getLastname());
+		athDto.setBirthdate(sdf.format(athlete.getBirthdate()));
+		athDto.setLicenseId(license.getId());
+		athDto.setId(license.getAthlete().getId());
+		athDto.setBib(license.getBib());
+		athDto.setTeam(license.getTeam().getName());
+		
 		// TODO : setTeam (from License)
 		return athDto;
 	}
@@ -84,18 +93,22 @@ public class AthleteServiceImpl implements AthleteService {
 	}
 
 	@Override
-	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CompetitionDto competition) {
+	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CategoryDto category, CompetitionDto competition) {
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
 		if (competitor == null) {
 			competitor = new CompetitorEntity();
-			AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
-			competitor.setAthlete(athleteEntity);
+			competitor.setAthlete(new AthleteEntity(athlete.getId()));
 			competitor.setParticipations(new ArrayList<>());
+			competitor.setCompetition(new CompetitionEntity(competition.getId()));
+			competitor.setBib(athlete.getBib());
+			competitor.setLicense(new LicenseEntity(athlete.getLicenseId()));
+			competitor.setDisplayname(athlete.getLastName()+", "+athlete.getFirstName());
 		}
 		for (EventDto event : events) {
 			EventEntity eventEntity = eventDao.findById(event.getId());
 			for (RoundEntity round : eventEntity.getRounds()) {
 				ParticipationEntity participation = new ParticipationEntity();
+				participation.setCategoryEntity(new CategoryEntity(category.getId()));
 				participation.setRound(round);
 				competitor.getParticipations().add(participation);
 			}

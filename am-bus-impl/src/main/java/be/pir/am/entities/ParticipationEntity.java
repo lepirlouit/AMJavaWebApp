@@ -20,7 +20,7 @@ public class ParticipationEntity extends BaseEntity {
 	@Column
 	private Integer heat = 0;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category")
+	@JoinColumn(name = "category",nullable=false)
 	private CategoryEntity categoryEntity;
 
 	/**

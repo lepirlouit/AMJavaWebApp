@@ -20,6 +20,13 @@ public class CategoryEntity extends BaseEntity {
 	@JoinColumn(name = "federation", nullable = false)
 	private FederationEntity federation;
 
+	public CategoryEntity() {
+	}
+
+	public CategoryEntity(Integer id) {
+		super(id);
+	}
+
 	public String getName() {
 		return name;
 	}

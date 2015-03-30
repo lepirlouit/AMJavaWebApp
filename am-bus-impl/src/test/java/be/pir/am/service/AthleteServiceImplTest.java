@@ -48,11 +48,11 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 	public void testDependencyInjectionWithMethodInvokation() {
 		final AthleteServiceImpl toTest = this.getBeanToTest();
 		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBib(500);
-		Assert.assertEquals(9, findAthletesByBib.size());
+		Assert.assertEquals(11, findAthletesByBib.size());
 	}
 
 	public void testFindEvents() {
-		CompetitionEntity competition = getEntityManager().find(CompetitionEntity.class, 72);
+		CompetitionEntity competition = getEntityManager().find(CompetitionEntity.class, 71);
 		Assert.assertNotNull(competition);
 		AthleteEntity athlete = getEntityManager().find(AthleteEntity.class, 1026601);
 		Assert.assertNotNull(athlete);
@@ -90,13 +90,21 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 	public void testSubscribeAthleteToEvents() {
 		AthleteDto athlete = new AthleteDto();
 		athlete.setId(1026657);//sarah
+		athlete.setBib("927");
+		athlete.setLicenseId(1026657);
+		athlete.setFirstName("UnitTest");
+		athlete.setLastName("Ejb3Unit");
+		
 		CompetitionDto competition = new CompetitionDto();
 		competition.setId(71);
 		EventDto event = new EventDto();
 		event.setId(3);
+		CategoryDto category = new CategoryDto();
+		category.setId(58);
 
 		final AthleteServiceImpl toTest = this.getBeanToTest();
-		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), competition);
+		
+		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
 
 	}
 

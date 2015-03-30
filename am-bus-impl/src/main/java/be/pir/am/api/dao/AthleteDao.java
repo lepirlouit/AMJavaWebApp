@@ -6,8 +6,9 @@ import java.util.List;
 import javax.ejb.Local;
 
 import be.pir.am.entities.AthleteEntity;
+import be.pir.am.entities.LicenseEntity;
 
 @Local
 public interface AthleteDao extends EntityDao<AthleteEntity> {
-	List<AthleteEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin, Date dateMax);
+	List<LicenseEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin, Date dateMax);
 }
