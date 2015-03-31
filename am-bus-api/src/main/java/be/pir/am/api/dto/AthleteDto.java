@@ -1,11 +1,10 @@
 package be.pir.am.api.dto;
 
 public class AthleteDto extends BaseDto {
-	private String firstName, lastName, team, birthdate;
+	private String firstName, lastName, team, teamShort, birthdate;
 	private String bib;
 	private int licenseId;
-	
-	
+
 	public AthleteDto() {
 	}
 
@@ -37,6 +36,14 @@ public class AthleteDto extends BaseDto {
 
 	public void setTeam(String team) {
 		this.team = team;
+	}
+
+	public String getTeamShort() {
+		return teamShort;
+	}
+
+	public void setTeamShort(String teamShort) {
+		this.teamShort = teamShort;
 	}
 
 	public String getBirthdate() {

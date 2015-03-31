@@ -73,7 +73,7 @@ public class AthleteServiceImpl implements AthleteService {
 	}
 
 	private AthleteDto createAthleteDto(LicenseEntity license) {
-		AthleteEntity athlete=license.getAthlete();
+		AthleteEntity athlete = license.getAthlete();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		AthleteDto athDto = new AthleteDto(athlete.getFirstname(), athlete.getLastname());
 		athDto.setBirthdate(sdf.format(athlete.getBirthdate()));
@@ -81,19 +81,23 @@ public class AthleteServiceImpl implements AthleteService {
 		athDto.setId(license.getAthlete().getId());
 		athDto.setBib(license.getBib());
 		athDto.setTeam(license.getTeam().getName());
-		
-		// TODO : setTeam (from License)
+		athDto.setTeamShort(license.getTeam().getAbbreviation());
+
 		return athDto;
 	}
 
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
-		// TODO Auto-generated method stub
+		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
+		for (ParticipationEntity participation : competitor.getParticipations()) {
+			//			participation.getRound().get
+		}
 		return null;
 	}
 
 	@Override
-	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CategoryDto category, CompetitionDto competition) {
+	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CategoryDto category,
+			CompetitionDto competition) {
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
 		if (competitor == null) {
 			competitor = new CompetitorEntity();
@@ -102,7 +106,7 @@ public class AthleteServiceImpl implements AthleteService {
 			competitor.setCompetition(new CompetitionEntity(competition.getId()));
 			competitor.setBib(athlete.getBib());
 			competitor.setLicense(new LicenseEntity(athlete.getLicenseId()));
-			competitor.setDisplayname(athlete.getLastName()+", "+athlete.getFirstName());
+			competitor.setDisplayname(athlete.getLastName() + ", " + athlete.getFirstName());
 		}
 		for (EventDto event : events) {
 			EventEntity eventEntity = eventDao.findById(event.getId());
