@@ -35,11 +35,11 @@ public class CategoryDaoImplTest extends BaseSessionBeanFixture<CategoryDaoImpl>
 		federation.setId(10);
 		for (short i = 6; i < 100; i++) {
 			List<CategoryEntity> findAthletesByBib = toTest.findCategoriesByGenderFederationAndAge('W', federation, i);
-			Assert.assertEquals(1, findAthletesByBib.size());
+			Assert.assertEquals("error for W age : " + i, 1, findAthletesByBib.size());
 		}
 		for (short i = 6; i < 100; i++) {
 			List<CategoryEntity> findAthletesByBib = toTest.findCategoriesByGenderFederationAndAge('M', federation, i);
-			Assert.assertEquals(1, findAthletesByBib.size());
+			Assert.assertEquals("error for M age : " + i, 1, 1, findAthletesByBib.size());
 		}
 	}
 
