@@ -30,19 +30,20 @@ public class EventDaoImplTest extends BaseSessionBeanFixture<EventDaoImpl> {
 		super(EventDaoImpl.class, usedBeans);
 	}
 
-	public void testMaxOneCategoryForEachAge() {
+	public void testFindEventsByCategoryAndCompetition() {
 		final EventDaoImpl toTest = this.getBeanToTest();
 		CompetitionEntity competition = new CompetitionEntity();
-		competition.setId(72);
+		competition.setId(71);
 
 		CategoryEntity category = new CategoryEntity();
 		category.setId(58);
 
-		List<EventEntity> findAthletesByBib = toTest.findEventsByfCategoryAndCompetition(competition,
+		List<EventEntity> findAthletesByBib = toTest.findEventsByCategoryAndCompetition(competition,
 				Arrays.asList(category));
 		for (EventEntity eventEntity : findAthletesByBib) {
 			System.out.println(eventEntity.getName());
 		}
 		Assert.assertEquals(1, findAthletesByBib.size());
 	}
+
 }

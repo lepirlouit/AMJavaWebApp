@@ -48,7 +48,7 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 	public void testDependencyInjectionWithMethodInvokation() {
 		final AthleteServiceImpl toTest = this.getBeanToTest();
 		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBib(500);
-		Assert.assertEquals(11, findAthletesByBib.size());
+		Assert.assertEquals(12, findAthletesByBib.size());
 	}
 
 	public void testFindEvents() {
@@ -79,12 +79,13 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		CategoryDto category = new CategoryDto();
 		category.setMinimumAge((short) 20);
 		category.setMaximumAge((short) 35);
+		category.setGender('W');
 
-		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBibAndCategory(1997, category);
+		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBibAndCategory(927, category);
 		for (AthleteDto athleteDto : findAthletesByBib) {
 			System.out.println(athleteDto.getLastName());
 		}
-		Assert.assertEquals(0, findAthletesByBib.size());
+		Assert.assertEquals(2, findAthletesByBib.size());
 	}
 
 	public void testSubscribeAthleteToEvents() {
@@ -94,7 +95,7 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		athlete.setLicenseId(1026657);
 		athlete.setFirstName("UnitTest");
 		athlete.setLastName("Ejb3Unit");
-		
+
 		CompetitionDto competition = new CompetitionDto();
 		competition.setId(71);
 		EventDto event = new EventDto();
@@ -103,7 +104,7 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 		category.setId(58);
 
 		final AthleteServiceImpl toTest = this.getBeanToTest();
-		
+
 		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
 
 	}
