@@ -4,6 +4,7 @@ public class AthleteDto extends BaseDto {
 	private String firstName, lastName, team, teamShort, birthdate;
 	private String bib;
 	private int licenseId;
+	private Character gender;
 
 	public AthleteDto() {
 	}
@@ -68,6 +69,14 @@ public class AthleteDto extends BaseDto {
 
 	public void setLicenseId(int licenseId) {
 		this.licenseId = licenseId;
+	}
+
+	public Character getGender() {
+		return gender;
+	}
+
+	public void setGender(Character gender) {
+		this.gender = gender;
 	}
 
 }
