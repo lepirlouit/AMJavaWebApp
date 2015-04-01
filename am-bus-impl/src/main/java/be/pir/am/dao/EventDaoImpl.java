@@ -22,7 +22,7 @@ public class EventDaoImpl extends AbstractEntityDao<EventEntity> implements Even
 	}
 
 	@Override
-	public List<EventEntity> findEventsByfCategoryAndCompetition(CompetitionEntity competition,
+	public List<EventEntity> findEventsByCategoryAndCompetition(CompetitionEntity competition,
 			List<CategoryEntity> categories) {
 
 		EntityManager em = getEntityManager();
