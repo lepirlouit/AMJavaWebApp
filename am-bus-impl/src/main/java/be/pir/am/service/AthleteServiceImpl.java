@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -13,6 +15,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import be.pir.am.api.dao.AthleteDao;
+import be.pir.am.api.dao.CategoryDao;
 import be.pir.am.api.dao.CompetitorDao;
 import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dao.LicenseDao;
@@ -26,6 +29,7 @@ import be.pir.am.entities.CategoryEntity;
 import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.EventEntity;
+import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
 import be.pir.am.entities.RoundEntity;
@@ -41,6 +45,8 @@ public class AthleteServiceImpl implements AthleteService {
 	private EventDao eventDao;
 	@EJB
 	private CompetitorDao competitorDao;
+	@EJB
+	private CategoryDao categoryDao;
 
 	@Override
 	public List<AthleteDto> findAthletesByBib(int bib) {
@@ -82,17 +88,37 @@ public class AthleteServiceImpl implements AthleteService {
 		athDto.setBib(license.getBib());
 		athDto.setTeam(license.getTeam().getName());
 		athDto.setTeamShort(license.getTeam().getAbbreviation());
-
+		athDto.setGender(athlete.getGender());
 		return athDto;
 	}
 
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
-		for (ParticipationEntity participation : competitor.getParticipations()) {
-			//			participation.getRound().get
+		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(athlete.getGender(),
+				new FederationEntity(competition.getFederationId()), athlete.getBirthdate());
+		List<EventEntity> events = eventDao.findEventsByCategoryAndCompetition(
+				new CompetitionEntity(competition.getId()), categories);
+		Set<RoundEntity> rounds = new HashSet<>();
+		List<EventDto> returnedList = new ArrayList<>();
+		if (competitor != null) {
+			for (ParticipationEntity participation : competitor.getParticipations()) {
+				rounds.add(participation.getRound());
+			}
 		}
-		return null;
+		for (EventEntity event : events) {
+			EventDto e = new EventDto();
+			boolean contains = false;
+			for (RoundEntity round : event.getRounds()) {
+				if (rounds.contains(round)) {
+					contains = true;
+					break;
+				}
+			}
+			e.setChecked(contains);
+			returnedList.add(e);
+		}
+		return returnedList;
 	}
 
 	@Override
