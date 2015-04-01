@@ -52,6 +52,13 @@ public class FederationEntity extends BaseEntity {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "federation")
 	private List<CategoryEntity> categories;
 
+	public FederationEntity() {
+	}
+
+	public FederationEntity(Integer id) {
+		super(id);
+	}
+
 	public String getCode() {
 		return code;
 	}
