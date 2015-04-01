@@ -95,6 +95,7 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
+		//TODO : calculate age at 31-12 of competition year.
 		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(athlete.getGender(),
 				new FederationEntity(competition.getFederationId()), athlete.getBirthdate());
 		List<EventEntity> events = eventDao.findEventsByCategoryAndCompetition(
@@ -112,6 +113,7 @@ public class AthleteServiceImpl implements AthleteService {
 			for (RoundEntity round : event.getRounds()) {
 				if (rounds.contains(round)) {
 					contains = true;
+					//TODO : find records for event and athlete, + set the lowest value record for that event
 					break;
 				}
 			}
