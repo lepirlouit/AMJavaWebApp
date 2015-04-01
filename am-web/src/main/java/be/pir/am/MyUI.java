@@ -16,6 +16,8 @@ import be.pir.am.util.ServiceLocator;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.server.VaadinRequest;
@@ -42,8 +44,7 @@ public class MyUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-		AthleteService athleteService = ServiceLocator.getInstance()
-				.getAthleteService();
+		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
 
 		final VerticalLayout layout = new VerticalLayout();
@@ -53,9 +54,9 @@ public class MyUI extends UI {
 		final HorizontalLayout searchForm = new HorizontalLayout();
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
-		
+
 		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
-		TextField bib = new TextField("Dossard/Bib",bibProperty);
+		TextField bib = new TextField("Dossard/Bib", bibProperty);
 		bib.setNullRepresentation("");
 		ComboBox cbxCategory = new ComboBox("Category");
 
@@ -66,14 +67,21 @@ public class MyUI extends UI {
 		Button searchBtn = new Button("Search");
 		searchForm.addComponents(new FormLayout(bib), new FormLayout(cbxCategory), new FormLayout(searchBtn));
 
-
-
 		Table tb = new Table();
 		tb.setVisible(false);
-		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(
-				AthleteDto.class));
+		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(AthleteDto.class));
 		tb.setVisibleColumns("firstName", "lastName");
+		tb.setSelectable(true);
 		layout.addComponent(tb);
+		tb.addValueChangeListener(new Property.ValueChangeListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				AthleteDto selectAthlete = (AthleteDto) tb.getValue();
+
+			}
+		});
 
 		searchBtn.addClickListener(new Button.ClickListener() {
 
@@ -85,13 +93,14 @@ public class MyUI extends UI {
 				athlete.setId(1026657);//sarah
 				CompetitionDto competition = new CompetitionDto();
 				competition.setId(71);
+				competition.setFederationId(10);
 				EventDto event = new EventDto();
 				event.setId(3);
-CategoryDto category = new CategoryDto();
-category.setId(58);
-				
-				athleteService.subscribeAthleteToEvents(athlete, Arrays.asList(event),category , competition);
-				
+				CategoryDto category = new CategoryDto();
+				category.setId(58);
+
+				athleteService.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
+
 				List<AthleteDto> athls = athleteService.findAthletesByBibAndCategory(bibProperty.getValue(),
 						(CategoryDto) cbxCategory.getValue());
 				boolean foundAth = athls.size() > 0;
