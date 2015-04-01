@@ -78,8 +78,20 @@ public class MyUI extends UI {
 
 			@Override
 			public void valueChange(ValueChangeEvent event) {
-				AthleteDto selectAthlete = (AthleteDto) tb.getValue();
-
+				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
+				
+				CompetitionDto competition = new CompetitionDto();
+				competition.setId(71);
+				competition.setFederationId(10);
+				List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete,competition);
+				GridLayout gl = new GridLayout(3,eventsList.size());
+				int i=0;
+				for(EventDto event : eventsList){
+					gl.addComponent(0,i,new Checkbox(event.getChecked()));
+					gl.addComponent(0,i,new Label(event.getName()));
+					gl.addComponent(0,i,new TextField(event.getRecord()));
+					i++;
+				}
 			}
 		});
 
