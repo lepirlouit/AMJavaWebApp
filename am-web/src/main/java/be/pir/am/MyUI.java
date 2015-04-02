@@ -1,5 +1,6 @@
 package be.pir.am;
 
+import java.awt.Checkbox;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,9 +25,12 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -77,19 +81,18 @@ public class MyUI extends UI {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void valueChange(ValueChangeEvent event) {
+			public void valueChange(ValueChangeEvent valueChangeEvent) {
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
 				
 				CompetitionDto competition = new CompetitionDto();
 				competition.setId(71);
 				competition.setFederationId(10);
 				List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete,competition);
-				GridLayout gl = new GridLayout(3,eventsList.size());
+				GridLayout gl = new GridLayout(2,eventsList.size());
 				int i=0;
 				for(EventDto event : eventsList){
-					gl.addComponent(0,i,new Checkbox(event.getChecked()));
-					gl.addComponent(0,i,new Label(event.getName()));
-					gl.addComponent(0,i,new TextField(event.getRecord()));
+					gl.addComponent(new CheckBox(event.getName(),event.isChecked()),0,i);
+					gl.addComponent(new TextField("",""+event.getRecord()),1,i);
 					i++;
 				}
 			}
