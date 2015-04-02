@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -35,8 +36,8 @@ public class CompetitorEntity extends BaseEntity {
 	@Column(length = 256)
 	private String displayname;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@OrderColumn(name = "seqno", columnDefinition = "smallint")
+	@ManyToMany( cascade = CascadeType.ALL)
+	@OrderBy(value="seqno")
 	@JoinTable(name = "participants", joinColumns = { @JoinColumn(name = "competitor", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "participation", referencedColumnName = "ID") })
 	private List<ParticipationEntity> participations;
 
