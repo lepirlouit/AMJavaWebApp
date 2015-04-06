@@ -1,6 +1,7 @@
 package be.pir.am;
 
 import java.awt.Checkbox;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,30 +71,66 @@ public class MyUI extends UI {
 
 		Button searchBtn = new Button("Search");
 		searchForm.addComponents(new FormLayout(bib), new FormLayout(cbxCategory), new FormLayout(searchBtn));
-
+HorizontalLayout results = new HorizontalLayout();
 		Table tb = new Table();
 		tb.setVisible(false);
 		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(AthleteDto.class));
 		tb.setVisibleColumns("firstName", "lastName");
 		tb.setSelectable(true);
-		layout.addComponent(tb);
+		layout.addComponent(results);
+		results.addComponent(tb);
+		results.setSpacing(true);
 		tb.addValueChangeListener(new Property.ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void valueChange(ValueChangeEvent valueChangeEvent) {
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
-				
-				CompetitionDto competition = new CompetitionDto();
-				competition.setId(71);
-				competition.setFederationId(10);
-				List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete,competition);
-				GridLayout gl = new GridLayout(2,eventsList.size());
-				int i=0;
-				for(EventDto event : eventsList){
-					gl.addComponent(new CheckBox(event.getName(),event.isChecked()),0,i);
-					gl.addComponent(new TextField("",""+event.getRecord()),1,i);
-					i++;
+				if(selectedAthlete!=null){
+					CompetitionDto competition = new CompetitionDto();
+					competition.setId(71);
+					competition.setFederationId(10);
+					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete,competition);
+					List<EventDto> selectedEvents = new ArrayList<>();
+					VerticalLayout gl = new VerticalLayout();
+					for(EventDto event : eventsList){
+						HorizontalLayout eventLyt = new HorizontalLayout();
+						eventLyt.setSpacing(true);
+						if(event.isChecked())selectedEvents.add(event);
+						CheckBox checkBox = new CheckBox(event.getName(),event.isChecked());
+						checkBox.addValueChangeListener(new Property.ValueChangeListener() {
+							
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							public void valueChange(ValueChangeEvent vcEvent) {
+								if((Boolean)vcEvent.getProperty().getValue()){
+									selectedEvents.add(event);
+								}else{
+									selectedEvents.remove(event);
+								}
+							}
+						});
+						eventLyt.addComponent(new FormLayout(checkBox));
+						eventLyt.addComponent(new FormLayout(new TextField("record",""+event.getRecord())));
+						gl.addComponent(eventLyt);
+					}
+					Button inscriptionBtn = new Button("Inscription");
+					inscriptionBtn.addClickListener(new Button.ClickListener() {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void buttonClick(ClickEvent event) {
+							
+							
+							
+							
+						}
+					});
+					gl.addComponent(inscriptionBtn);
+					results.removeAllComponents();
+					results.addComponent(tb);
+					results.addComponent(gl);
 				}
 			}
 		});
@@ -104,17 +141,6 @@ public class MyUI extends UI {
 
 			@Override
 			public void buttonClick(ClickEvent clevent) {
-				AthleteDto athlete = new AthleteDto();
-				athlete.setId(1026657);//sarah
-				CompetitionDto competition = new CompetitionDto();
-				competition.setId(71);
-				competition.setFederationId(10);
-				EventDto event = new EventDto();
-				event.setId(3);
-				CategoryDto category = new CategoryDto();
-				category.setId(58);
-
-				athleteService.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
 
 				List<AthleteDto> athls = athleteService.findAthletesByBibAndCategory(bibProperty.getValue(),
 						(CategoryDto) cbxCategory.getValue());
@@ -134,5 +160,10 @@ public class MyUI extends UI {
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
 	public static class MyUIServlet extends VaadinServlet {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 	}
 }

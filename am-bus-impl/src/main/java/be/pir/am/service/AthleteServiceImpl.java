@@ -116,6 +116,7 @@ public class AthleteServiceImpl implements AthleteService {
 		}
 		for (EventEntity event : events) {
 			EventDto e = new EventDto();
+			e.setName(event.getName());
 			boolean contains = false;
 			for (RoundEntity round : event.getRounds()) {
 				if (rounds.contains(round)) {
