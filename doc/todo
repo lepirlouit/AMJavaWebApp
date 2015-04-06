@@ -1,0 +1,7 @@
+TODO /
+- check that participants is created when new participator is created
+- GESTION DES RECORDS
+- Gestions du event type (si distance est different de 0 (ou entre 5 et 15000)) alors demander record
+- impression des feuilles/ par event, qui est inscrit à quoi
+- search is defautl button
+- handle epreuves multiples
