@@ -96,15 +96,14 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
-		//TODO : calculate age at 31-12 of competition year.
 		AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
-		LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear() , 12, 31);
-		LocalDate birthday = athleteEntity.getBirthdate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
- 
+		LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+		LocalDate birthday = athleteEntity.getBirthdate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
 		Period p = Period.between(birthday, endOfYear);
-		
+
 		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(athleteEntity.getGender(),
-				new FederationEntity(competition.getFederationId()), (short)p.getYears());
+				new FederationEntity(competition.getFederationId()), (short) p.getYears());
 		List<EventEntity> events = eventDao.findEventsByCategoryAndCompetition(
 				new CompetitionEntity(competition.getId()), categories);
 		Set<RoundEntity> rounds = new HashSet<>();
