@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import be.pir.am.api.dao.CategoryDao;
 import be.pir.am.api.dao.CompetitorDao;
 import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dao.LicenseDao;
+import be.pir.am.api.dao.ParticipationDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
@@ -48,6 +50,8 @@ public class AthleteServiceImpl implements AthleteService {
 	private CompetitorDao competitorDao;
 	@EJB
 	private CategoryDao categoryDao;
+	@EJB
+	private ParticipationDao participationDao;
 
 	@Override
 	public List<AthleteDto> findAthletesByBib(int bib) {
@@ -150,13 +154,37 @@ public class AthleteServiceImpl implements AthleteService {
 		for (EventDto event : events) {
 			EventEntity eventEntity = eventDao.findById(event.getId());
 			for (RoundEntity round : eventEntity.getRounds()) {
-				ParticipationEntity participation = new ParticipationEntity();
-				participation.setCategoryEntity(new CategoryEntity(category.getId()));
-				participation.setRound(round);
-				competitor.getParticipations().add(participation);
+				ParticipationEntity participation = findParticipation(competitor, round);
+				if (participation == null) {
+					participation = new ParticipationEntity();
+					participation.setCategoryEntity(new CategoryEntity(category.getId()));
+					participation.setRound(round);
+					participation.setCompetitors(Arrays.asList(competitor));
+				}
+				if (event.isChecked()) {
+					if (!competitor.getParticipations().contains(participation)) {
+						competitor.getParticipations().add(participation);
+					}
+				} else {
+					competitor.getParticipations().remove(participation);
+					participationDao.delete(participation);
+				}
 			}
 		}
-		competitorDao.save(competitor);
+		if (competitor.getParticipations().size() == 0) {
+			competitorDao.delete(competitor);
+		} else {
+			competitorDao.save(competitor);
+		}
+	}
+
+	private ParticipationEntity findParticipation(CompetitorEntity competitor, RoundEntity round) {
+		for (ParticipationEntity participation : competitor.getParticipations()) {
+			if ((participation != null) && round.equals(participation.getRound())) {
+				return participation;
+			}
+		}
+		return null;
 	}
 
 }

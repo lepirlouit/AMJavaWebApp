@@ -3,7 +3,6 @@ package be.pir.am.api.dao;
 import java.util.List;
 
 import be.pir.am.entities.BaseEntity;
-import java.lang.Number;
 
 /**
  *
@@ -34,6 +33,12 @@ public interface EntityDao<T extends BaseEntity> {
 	 * @return the updated entity
 	 */
 	T update(T entity);
+
+	/**
+	 * Remove the entity
+	 * @param entity the entity to save
+	 */
+	void delete(T entity);
 
 	/**
 	 * finds all of the entities of type T

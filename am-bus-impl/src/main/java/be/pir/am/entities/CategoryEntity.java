@@ -75,4 +75,63 @@ public class CategoryEntity extends BaseEntity {
 		this.gender = gender;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((abbreviation == null) ? 0 : abbreviation.hashCode());
+		result = (prime * result) + ((federation == null) ? 0 : federation.hashCode());
+		result = (prime * result) + ((gender == null) ? 0 : gender.hashCode());
+		result = (prime * result) + ((maximumAge == null) ? 0 : maximumAge.hashCode());
+		result = (prime * result) + ((minimumAge == null) ? 0 : minimumAge.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		CategoryEntity other = (CategoryEntity) obj;
+		if (abbreviation == null) {
+			if (other.abbreviation != null) {
+				return false;
+			}
+		} else if (!abbreviation.equals(other.abbreviation)) {
+			return false;
+		}
+		if (federation == null) {
+			if (other.federation != null) {
+				return false;
+			}
+		} else if (!federation.equals(other.federation)) {
+			return false;
+		}
+		if (gender == null) {
+			if (other.gender != null) {
+				return false;
+			}
+		} else if (!gender.equals(other.gender)) {
+			return false;
+		}
+		if (maximumAge == null) {
+			if (other.maximumAge != null) {
+				return false;
+			}
+		} else if (!maximumAge.equals(other.maximumAge)) {
+			return false;
+		}
+		if (minimumAge == null) {
+			if (other.minimumAge != null) {
+				return false;
+			}
+		} else if (!minimumAge.equals(other.minimumAge)) {
+			return false;
+		}
+		return true;
+	}
+
 }

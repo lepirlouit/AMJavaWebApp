@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 
 import be.pir.am.api.dao.EntityDao;
 import be.pir.am.entities.BaseEntity;
-import java.lang.Number;
+
 /**
  * AbstractEntityRepository
  *
@@ -16,8 +16,7 @@ import java.lang.Number;
  * @version %PR%
  * @since 21/08/13 - 10:50
  */
-public abstract class AbstractEntityDao<T extends BaseEntity> implements
-		EntityDao<T> {
+public abstract class AbstractEntityDao<T extends BaseEntity> implements EntityDao<T> {
 
 	@PersistenceContext(unitName = "am-jta")
 	private EntityManager entityManager;
@@ -45,6 +44,11 @@ public abstract class AbstractEntityDao<T extends BaseEntity> implements
 
 	}
 
+	@Override
+	public void delete(T entity) {
+		this.getEntityManager().remove(entity);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -61,9 +65,7 @@ public abstract class AbstractEntityDao<T extends BaseEntity> implements
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<T> findAll() {
-		return getEntityManager().createQuery(
-				"Select e from " + entityClass.getSimpleName() + " e")
-				.getResultList();
+		return getEntityManager().createQuery("Select e from " + entityClass.getSimpleName() + " e").getResultList();
 	}
 
 	/**

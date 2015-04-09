@@ -1,6 +1,5 @@
 package be.pir.am;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +19,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
@@ -33,6 +33,7 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Reindeer;
 
 /**
  *
@@ -66,6 +67,8 @@ public class MyUI extends UI {
 		cbxCategory.setItemCaptionPropertyId("name");
 
 		Button searchBtn = new Button("Search");
+		searchBtn.setClickShortcut(KeyCode.ENTER);
+		searchBtn.addStyleName(Reindeer.BUTTON_DEFAULT);
 		searchForm.addComponents(new FormLayout(bib), new FormLayout(cbxCategory), new FormLayout(searchBtn));
 		HorizontalLayout results = new HorizontalLayout();
 		Table tb = new Table();
@@ -87,14 +90,10 @@ public class MyUI extends UI {
 					competition.setId(71);
 					competition.setFederationId(10);
 					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
-					List<EventDto> selectedEvents = new ArrayList<>();
 					VerticalLayout gl = new VerticalLayout();
 					for (EventDto event : eventsList) {
 						HorizontalLayout eventLyt = new HorizontalLayout();
 						eventLyt.setSpacing(true);
-						if (event.isChecked()) {
-							selectedEvents.add(event);
-						}
 						CheckBox checkBox = new CheckBox(event.getName(), event.isChecked());
 						checkBox.addValueChangeListener(new Property.ValueChangeListener() {
 
@@ -102,11 +101,7 @@ public class MyUI extends UI {
 
 							@Override
 							public void valueChange(ValueChangeEvent vcEvent) {
-								if ((Boolean) vcEvent.getProperty().getValue()) {
-									selectedEvents.add(event);
-								} else {
-									selectedEvents.remove(event);
-								}
+								event.setChecked((Boolean) vcEvent.getProperty().getValue());
 							}
 						});
 						eventLyt.addComponent(new FormLayout(checkBox));
@@ -119,7 +114,7 @@ public class MyUI extends UI {
 
 						@Override
 						public void buttonClick(ClickEvent event) {
-							athleteService.subscribeAthleteToEvents(selectedAthlete, selectedEvents,
+							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
 									(CategoryDto) cbxCategory.getValue(), competition);
 
 						}
