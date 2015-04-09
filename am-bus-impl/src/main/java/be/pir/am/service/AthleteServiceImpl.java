@@ -110,11 +110,15 @@ public class AthleteServiceImpl implements AthleteService {
 		List<EventDto> returnedList = new ArrayList<>();
 		if (competitor != null) {
 			for (ParticipationEntity participation : competitor.getParticipations()) {
-				rounds.add(participation.getRound());
+				//participation can sometime be null because seqno starts from 1
+				if (participation != null) {
+					rounds.add(participation.getRound());
+				}
 			}
 		}
 		for (EventEntity event : events) {
 			EventDto e = new EventDto();
+			e.setId(event.getId());
 			e.setName(event.getName());
 			boolean contains = false;
 			for (RoundEntity round : event.getRounds()) {

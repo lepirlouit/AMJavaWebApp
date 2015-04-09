@@ -10,24 +10,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Entity
 @Table(name = "competitors")
 public class CompetitorEntity extends BaseEntity {
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "athlete")
+	@JoinColumn(name = "athlete", nullable = false)
 	private AthleteEntity athlete;
-	@Null
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "license")
 	private LicenseEntity license;
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "competition")
 	private CompetitionEntity competition;
@@ -36,8 +30,8 @@ public class CompetitorEntity extends BaseEntity {
 	@Column(length = 256)
 	private String displayname;
 
-	@ManyToMany( cascade = CascadeType.ALL)
-	@OrderBy(value="seqno")
+	@ManyToMany(cascade = CascadeType.ALL)
+	@OrderColumn(name = "seqno", columnDefinition = "smallint")
 	@JoinTable(name = "participants", joinColumns = { @JoinColumn(name = "competitor", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "participation", referencedColumnName = "ID") })
 	private List<ParticipationEntity> participations;
 

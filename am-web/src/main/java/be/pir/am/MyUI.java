@@ -1,8 +1,6 @@
 package be.pir.am;
 
-import java.awt.Checkbox;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -29,9 +27,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -71,7 +67,7 @@ public class MyUI extends UI {
 
 		Button searchBtn = new Button("Search");
 		searchForm.addComponents(new FormLayout(bib), new FormLayout(cbxCategory), new FormLayout(searchBtn));
-HorizontalLayout results = new HorizontalLayout();
+		HorizontalLayout results = new HorizontalLayout();
 		Table tb = new Table();
 		tb.setVisible(false);
 		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(AthleteDto.class));
@@ -86,33 +82,35 @@ HorizontalLayout results = new HorizontalLayout();
 			@Override
 			public void valueChange(ValueChangeEvent valueChangeEvent) {
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
-				if(selectedAthlete!=null){
+				if (selectedAthlete != null) {
 					CompetitionDto competition = new CompetitionDto();
 					competition.setId(71);
 					competition.setFederationId(10);
-					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete,competition);
+					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 					List<EventDto> selectedEvents = new ArrayList<>();
 					VerticalLayout gl = new VerticalLayout();
-					for(EventDto event : eventsList){
+					for (EventDto event : eventsList) {
 						HorizontalLayout eventLyt = new HorizontalLayout();
 						eventLyt.setSpacing(true);
-						if(event.isChecked())selectedEvents.add(event);
-						CheckBox checkBox = new CheckBox(event.getName(),event.isChecked());
+						if (event.isChecked()) {
+							selectedEvents.add(event);
+						}
+						CheckBox checkBox = new CheckBox(event.getName(), event.isChecked());
 						checkBox.addValueChangeListener(new Property.ValueChangeListener() {
-							
+
 							private static final long serialVersionUID = 1L;
 
 							@Override
 							public void valueChange(ValueChangeEvent vcEvent) {
-								if((Boolean)vcEvent.getProperty().getValue()){
+								if ((Boolean) vcEvent.getProperty().getValue()) {
 									selectedEvents.add(event);
-								}else{
+								} else {
 									selectedEvents.remove(event);
 								}
 							}
 						});
 						eventLyt.addComponent(new FormLayout(checkBox));
-						eventLyt.addComponent(new FormLayout(new TextField("record",""+event.getRecord())));
+						eventLyt.addComponent(new FormLayout(new TextField("record", "" + event.getRecord())));
 						gl.addComponent(eventLyt);
 					}
 					Button inscriptionBtn = new Button("Inscription");
@@ -121,10 +119,9 @@ HorizontalLayout results = new HorizontalLayout();
 
 						@Override
 						public void buttonClick(ClickEvent event) {
-							
-							
-							
-							
+							athleteService.subscribeAthleteToEvents(selectedAthlete, selectedEvents,
+									(CategoryDto) cbxCategory.getValue(), competition);
+
 						}
 					});
 					gl.addComponent(inscriptionBtn);
