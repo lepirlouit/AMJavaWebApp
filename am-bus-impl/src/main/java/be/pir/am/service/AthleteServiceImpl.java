@@ -124,6 +124,7 @@ public class AthleteServiceImpl implements AthleteService {
 			EventDto e = new EventDto();
 			e.setId(event.getId());
 			e.setName(event.getName());
+			e.setNeedRecord(event.getEventType().getDistance() > 5);
 			boolean contains = false;
 			for (RoundEntity round : event.getRounds()) {
 				if (rounds.contains(round)) {

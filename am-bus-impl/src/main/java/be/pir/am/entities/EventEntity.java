@@ -26,6 +26,9 @@ public class EventEntity extends BaseEntity {
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn(name = "event")
 	private Set<RoundEntity> rounds;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "type", nullable = false)
+	private EventTypeEntity eventType;
 
 	public CompetitionEntity getCompetition() {
 		return competition;
@@ -57,6 +60,14 @@ public class EventEntity extends BaseEntity {
 
 	public void setRounds(Set<RoundEntity> rounds) {
 		this.rounds = rounds;
+	}
+
+	public EventTypeEntity getEventType() {
+		return eventType;
+	}
+
+	public void setEventType(EventTypeEntity eventType) {
+		this.eventType = eventType;
 	}
 
 }

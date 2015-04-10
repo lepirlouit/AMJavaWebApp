@@ -1,5 +1,6 @@
 package be.pir.am;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
@@ -105,7 +106,13 @@ public class MyUI extends UI {
 							}
 						});
 						eventLyt.addComponent(new FormLayout(checkBox));
-						eventLyt.addComponent(new FormLayout(new TextField("record", "" + event.getRecord())));
+						if (event.isNeedRecord()) {
+							ObjectProperty<BigDecimal> recordProperty = new ObjectProperty<BigDecimal>(event
+									.getRecord(), BigDecimal.class);
+							TextField recordField = new TextField("record", recordProperty);
+							recordField.setNullRepresentation("");
+							eventLyt.addComponent(new FormLayout(recordField));
+						}
 						gl.addComponent(eventLyt);
 					}
 					Button inscriptionBtn = new Button("Inscription");

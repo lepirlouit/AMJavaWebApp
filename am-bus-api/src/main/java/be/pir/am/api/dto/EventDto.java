@@ -6,6 +6,7 @@ public class EventDto extends BaseDto {
 	private String name, abbreviation;
 	private Short minimumAge, maximumAge;
 	private boolean checked;
+	private boolean needRecord;
 	private BigDecimal record;
 
 	public String getName() {
@@ -46,6 +47,14 @@ public class EventDto extends BaseDto {
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+
+	public boolean isNeedRecord() {
+		return needRecord;
+	}
+
+	public void setNeedRecord(boolean needRecord) {
+		this.needRecord = needRecord;
 	}
 
 	public BigDecimal getRecord() {
