@@ -18,6 +18,7 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -27,6 +28,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
@@ -94,22 +96,25 @@ public class MyUI extends UI {
 					VerticalLayout gl = new VerticalLayout();
 					for (EventDto event : eventsList) {
 						HorizontalLayout eventLyt = new HorizontalLayout();
-						eventLyt.setSpacing(true);
-						CheckBox checkBox = new CheckBox(event.getName(), event.isChecked());
-						checkBox.addValueChangeListener(new Property.ValueChangeListener() {
-
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void valueChange(ValueChangeEvent vcEvent) {
-								event.setChecked((Boolean) vcEvent.getProperty().getValue());
-							}
-						});
-						eventLyt.addComponent(new FormLayout(checkBox));
+						eventLyt.setSpacing(false);
+						final BeanFieldGroup<EventDto> binder =
+						        new BeanFieldGroup<EventDto>(EventDto.class);
+						binder.setItemDataSource(event);
+						Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
+						
+//						CheckBox checkBox = new CheckBox(event.getName(), event.isChecked());
+//						checkBox.addValueChangeListener(new Property.ValueChangeListener() {
+//
+//							private static final long serialVersionUID = 1L;
+//
+//							@Override
+//							public void valueChange(ValueChangeEvent vcEvent) {
+//								event.setChecked((Boolean) vcEvent.getProperty().getValue());
+//							}
+//						});
+						eventLyt.addComponent(new FormLayout(checkbox));
 						if (event.isNeedRecord()) {
-							ObjectProperty<BigDecimal> recordProperty = new ObjectProperty<BigDecimal>(event
-									.getRecord(), BigDecimal.class);
-							TextField recordField = new TextField("record", recordProperty);
+							TextField recordField = (TextField) binder.buildAndBind("Record (en secondes)", "record");
 							recordField.setNullRepresentation("");
 							eventLyt.addComponent(new FormLayout(recordField));
 						}
