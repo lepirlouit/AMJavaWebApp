@@ -1,5 +1,6 @@
 package be.pir.am;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.BeanItemContainer;
@@ -130,6 +132,12 @@ public class MyUI extends UI {
 							}
 							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
 									(CategoryDto) cbxCategory.getValue(), competition);
+							//TODO : display nice message
+							Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
+									.getListeners(ValueChangeEvent.class);
+							for (Property.ValueChangeListener vcl : listeners) {
+								vcl.valueChange(valueChangeEvent);
+							}
 
 						}
 					});

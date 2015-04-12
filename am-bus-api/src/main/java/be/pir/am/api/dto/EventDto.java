@@ -8,6 +8,7 @@ public class EventDto extends BaseDto {
 	private boolean checked;
 	private boolean needRecord;
 	private BigDecimal record;
+	private Integer recordId;
 
 	public String getName() {
 		return name;
@@ -63,6 +64,14 @@ public class EventDto extends BaseDto {
 
 	public void setRecord(BigDecimal record) {
 		this.record = record;
+	}
+
+	public Integer getRecordId() {
+		return recordId;
+	}
+
+	public void setRecordId(Integer recordId) {
+		this.recordId = recordId;
 	}
 
 }

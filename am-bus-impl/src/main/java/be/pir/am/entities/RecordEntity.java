@@ -1,7 +1,9 @@
 package be.pir.am.entities;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -18,7 +20,8 @@ public class RecordEntity extends BaseEntity {
 	@JoinColumn(name = "eventtype")
 	private EventTypeEntity eventtype;
 	private Date date;
-	private Double value;
+	@Column(precision = 8, scale = 3)
+	private BigDecimal value;
 
 	public AthleteEntity getAthlete() {
 		return athlete;
@@ -44,11 +47,11 @@ public class RecordEntity extends BaseEntity {
 		this.date = date;
 	}
 
-	public Double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 
