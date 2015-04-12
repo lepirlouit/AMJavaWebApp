@@ -34,8 +34,10 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -45,7 +47,7 @@ import com.vaadin.ui.themes.Reindeer;
 /**
  *
  */
-@Theme("mytheme")
+@Theme("runo")
 @Widgetset("be.pir.am.MyAppWidgetset")
 public class MyUI extends UI {
 
@@ -56,10 +58,13 @@ public class MyUI extends UI {
 		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
 
+		Panel panel = new Panel("Inscrption à la competition RRCB - Meeting Express (jeudi 23 avril 2015)");
+
 		final VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setMargin(true);
-		setContent(layout);
+		panel.setContent(layout);
+		setContent(panel);
 		final HorizontalLayout searchForm = new HorizontalLayout();
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
@@ -81,7 +86,10 @@ public class MyUI extends UI {
 		Table tb = new Table();
 		tb.setVisible(false);
 		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(AthleteDto.class));
-		tb.setVisibleColumns("firstName", "lastName");
+		tb.setVisibleColumns("firstName", "lastName", "teamShort");
+		tb.setColumnHeader("firstName", "Prénom");
+		tb.setColumnHeader("lastName", "Nom");
+		tb.setColumnHeader("teamShort", "Club");
 		tb.setSelectable(true);
 		layout.addComponent(results);
 		results.addComponent(tb);
@@ -98,10 +106,13 @@ public class MyUI extends UI {
 					competition.setFederationId(10);
 					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 					VerticalLayout gl = new VerticalLayout();
+					gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
+							+ " - " + selectedAthlete.getBirthdate() + " (" + selectedAthlete.getTeam() + ')'));
+
 					Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
 					for (EventDto event : eventsList) {
 						HorizontalLayout eventLyt = new HorizontalLayout();
-						eventLyt.setSpacing(false);
+						eventLyt.setSpacing(true);
 						final BeanFieldGroup<EventDto> binder = new BeanFieldGroup<EventDto>(EventDto.class);
 						binders.add(binder);
 						binder.setBuffered(true);
@@ -132,7 +143,8 @@ public class MyUI extends UI {
 							}
 							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
 									(CategoryDto) cbxCategory.getValue(), competition);
-							//TODO : display nice message
+							Notification.show("Inscription Ok", Type.HUMANIZED_MESSAGE);
+							@SuppressWarnings("unchecked")
 							Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
 									.getListeners(ValueChangeEvent.class);
 							for (Property.ValueChangeListener vcl : listeners) {
