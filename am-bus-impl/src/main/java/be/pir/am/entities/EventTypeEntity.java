@@ -8,6 +8,12 @@ import javax.persistence.Table;
 public class EventTypeEntity extends BaseEntity {
 	private Double distance;
 
+	public EventTypeEntity() {
+	}
+
+	public EventTypeEntity(Integer id) {
+		super(id);
+	}
 
 	public Double getDistance() {
 		return distance;
@@ -16,6 +22,5 @@ public class EventTypeEntity extends BaseEntity {
 	public void setDistance(Double distance) {
 		this.distance = distance;
 	}
-
 
 }
