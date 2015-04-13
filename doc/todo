@@ -1,8 +1,7 @@
 TODO /
 
-- Gestions du event type (si distance est different de 0 (ou entre 5 et 15000)) alors demander record
 - inscription nouvel athlete
-- GESTION DES RECORDS
 - impression des feuilles/ par event, qui est inscrit à quoi
 
 - handle epreuves multiples
+- record : encodages en minutes/secondes/centiemes

@@ -1,11 +1,5 @@
 package be.pir.am.dao;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-
-import junit.framework.Assert;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CategoryEntity;
 import be.pir.am.entities.CompetitionEntity;
@@ -22,7 +16,7 @@ import be.pir.am.entities.TeamEntity;
 
 import com.bm.testsuite.BaseSessionBeanFixture;
 
-public class AthleteDaoImplTest extends BaseSessionBeanFixture<AthleteDaoImpl> {
+public class RecordDaoImplTest extends BaseSessionBeanFixture<RecordDaoImpl> {
 	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
 			TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
 			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class,
@@ -31,20 +25,16 @@ public class AthleteDaoImplTest extends BaseSessionBeanFixture<AthleteDaoImpl> {
 	/**
 	 * Constructor.
 	 */
-	public AthleteDaoImplTest() {
-		super(AthleteDaoImpl.class, usedBeans);
+	public RecordDaoImplTest() {
+		super(RecordDaoImpl.class, usedBeans);
 	}
 
-	public void testFindAthleteByBibAndBirthdayMinMax() {
-		final AthleteDaoImpl toTest = this.getBeanToTest();
+	public void testfindRecords() {
+		final RecordDaoImpl toTest = this.getBeanToTest();
+		AthleteEntity athlete = new AthleteEntity(858810);
+		EventTypeEntity eventType = new EventTypeEntity(139);
 
-		Date min = Date.from(LocalDate.of(1989, 11, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-		Date max = Date.from(LocalDate.of(1989, 11, 30).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-
-		List<LicenseEntity> findAthletesByBib = toTest.findAthleteByBibGenderAndBirthdayMinMax("1997", 'W', min, max);
-		for (LicenseEntity athlete : findAthletesByBib) {
-			System.out.println(athlete.getAthlete().getLastname());
-		}
-		Assert.assertEquals(1, findAthletesByBib.size());
+		RecordEntity bestRecord = toTest.getBestRecordForAthleteAndEventType(athlete, eventType);
+		System.out.println(bestRecord.getValue());
 	}
 }

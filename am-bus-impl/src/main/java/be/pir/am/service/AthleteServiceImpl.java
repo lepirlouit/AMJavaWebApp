@@ -1,5 +1,6 @@
 package be.pir.am.service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,6 +24,7 @@ import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dao.LicenseDao;
 import be.pir.am.api.dao.ParticipationDao;
 import be.pir.am.api.dao.TeamDao;
+import be.pir.am.api.dao.RecordDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
@@ -37,6 +39,7 @@ import be.pir.am.entities.EventEntity;
 import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
+import be.pir.am.entities.RecordEntity;
 import be.pir.am.entities.RoundEntity;
 import be.pir.am.entities.TeamEntity;
 
@@ -57,6 +60,8 @@ public class AthleteServiceImpl implements AthleteService {
 	private ParticipationDao participationDao;
 	@EJB
 	private TeamDao teamDao;
+	@EJB
+	private RecordDao recordDao;
 
 	@Override
 	public List<AthleteDto> findAthletesByBib(int bib) {
@@ -129,12 +134,20 @@ public class AthleteServiceImpl implements AthleteService {
 			EventDto e = new EventDto();
 			e.setId(event.getId());
 			e.setName(event.getName());
-			e.setNeedRecord(event.getEventType().getDistance() > 5);
+			boolean needRecord = event.getEventType().getDistance() > 5;
+			e.setNeedRecord(needRecord);
+			RecordEntity record = null;
+			if (needRecord) {
+				record = recordDao.getBestRecordForAthleteAndEventType(athleteEntity, event.getEventType());
+				if (record != null) {
+					e.setRecord(record.getValue());
+					e.setRecordId(record.getId());
+				}
+			}
 			boolean contains = false;
 			for (RoundEntity round : event.getRounds()) {
 				if (rounds.contains(round)) {
 					contains = true;
-					//TODO : find records for event and athlete, + set the lowest value record for that event
 					break;
 				}
 			}
@@ -171,6 +184,24 @@ public class AthleteServiceImpl implements AthleteService {
 					if (!competitor.getParticipations().contains(participation)) {
 						competitor.getParticipations().add(participation);
 					}
+					if (event.isNeedRecord()) {
+
+						if ((event.getRecord() == null) || BigDecimal.ZERO.equals(event.getRecord())) {
+							//remove all previous records
+
+						} else {
+							if ((event.getRecordId() == null)
+									|| (event.getRecord().compareTo(recordDao.findById(event.getRecordId()).getValue()) != 0)) {
+								//create new record
+								RecordEntity newrecord = new RecordEntity();
+								newrecord.setDate(new Date());
+								newrecord.setAthlete(competitor.getAthlete());
+								newrecord.setEventtype(eventEntity.getEventType());
+								newrecord.setValue(event.getRecord());
+								recordDao.save(newrecord);
+							}
+						}
+					}
 				} else {
 					competitor.getParticipations().remove(participation);
 					participationDao.delete(participation);
@@ -180,6 +211,8 @@ public class AthleteServiceImpl implements AthleteService {
 		if (competitor.getParticipations().size() == 0) {
 			competitorDao.delete(competitor);
 		} else {
+			//TODO send mail to competitor
+
 			competitorDao.save(competitor);
 		}
 	}

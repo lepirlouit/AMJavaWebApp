@@ -1,7 +1,9 @@
 package be.pir.am;
 
-import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -18,7 +20,9 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -26,12 +30,14 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -41,7 +47,7 @@ import com.vaadin.ui.themes.Reindeer;
 /**
  *
  */
-@Theme("mytheme")
+@Theme("runo")
 @Widgetset("be.pir.am.MyAppWidgetset")
 public class MyUI extends UI {
 
@@ -52,10 +58,13 @@ public class MyUI extends UI {
 		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
 
+		Panel panel = new Panel("Inscrption à la competition RRCB - Meeting Express (jeudi 23 avril 2015)");
+
 		final VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setMargin(true);
-		setContent(layout);
+		panel.setContent(layout);
+		setContent(panel);
 		final HorizontalLayout searchForm = new HorizontalLayout();
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
@@ -77,7 +86,10 @@ public class MyUI extends UI {
 		Table tb = new Table();
 		tb.setVisible(false);
 		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(AthleteDto.class));
-		tb.setVisibleColumns("firstName", "lastName");
+		tb.setVisibleColumns("firstName", "lastName", "teamShort");
+		tb.setColumnHeader("firstName", "Prénom");
+		tb.setColumnHeader("lastName", "Nom");
+		tb.setColumnHeader("teamShort", "Club");
 		tb.setSelectable(true);
 		layout.addComponent(results);
 		results.addComponent(tb);
@@ -94,28 +106,23 @@ public class MyUI extends UI {
 					competition.setFederationId(10);
 					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 					VerticalLayout gl = new VerticalLayout();
+					gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
+							+ " - " + selectedAthlete.getBirthdate() + " (" + selectedAthlete.getTeam() + ')'));
+
+					Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
 					for (EventDto event : eventsList) {
 						HorizontalLayout eventLyt = new HorizontalLayout();
-						eventLyt.setSpacing(false);
-						final BeanFieldGroup<EventDto> binder =
-						        new BeanFieldGroup<EventDto>(EventDto.class);
+						eventLyt.setSpacing(true);
+						final BeanFieldGroup<EventDto> binder = new BeanFieldGroup<EventDto>(EventDto.class);
+						binders.add(binder);
+						binder.setBuffered(true);
 						binder.setItemDataSource(event);
 						Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
-						
-//						CheckBox checkBox = new CheckBox(event.getName(), event.isChecked());
-//						checkBox.addValueChangeListener(new Property.ValueChangeListener() {
-//
-//							private static final long serialVersionUID = 1L;
-//
-//							@Override
-//							public void valueChange(ValueChangeEvent vcEvent) {
-//								event.setChecked((Boolean) vcEvent.getProperty().getValue());
-//							}
-//						});
+
 						eventLyt.addComponent(new FormLayout(checkbox));
 						if (event.isNeedRecord()) {
 							TextField recordField = (TextField) binder.buildAndBind("Record (en secondes)", "record");
-							recordField.setNullRepresentation("");
+							recordField.setNullRepresentation("0,00");
 							eventLyt.addComponent(new FormLayout(recordField));
 						}
 						gl.addComponent(eventLyt);
@@ -126,8 +133,23 @@ public class MyUI extends UI {
 
 						@Override
 						public void buttonClick(ClickEvent event) {
+							try {
+								for (BeanFieldGroup<EventDto> binder : binders) {
+									binder.commit();
+								}
+							} catch (CommitException e) {
+								Notification.show("Un erreur s'est produite", "Erreur : " + e.getCause().getMessage(),
+										Type.ERROR_MESSAGE);
+							}
 							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
 									(CategoryDto) cbxCategory.getValue(), competition);
+							Notification.show("Inscription Ok", Type.HUMANIZED_MESSAGE);
+							@SuppressWarnings("unchecked")
+							Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
+									.getListeners(ValueChangeEvent.class);
+							for (Property.ValueChangeListener vcl : listeners) {
+								vcl.valueChange(valueChangeEvent);
+							}
 
 						}
 					});
