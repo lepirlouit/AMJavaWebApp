@@ -22,10 +22,12 @@ import be.pir.am.api.dao.CompetitorDao;
 import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dao.LicenseDao;
 import be.pir.am.api.dao.ParticipationDao;
+import be.pir.am.api.dao.TeamDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
 import be.pir.am.api.dto.EventDto;
+import be.pir.am.api.dto.TeamDto;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CategoryEntity;
@@ -36,6 +38,7 @@ import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
 import be.pir.am.entities.RoundEntity;
+import be.pir.am.entities.TeamEntity;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -52,6 +55,8 @@ public class AthleteServiceImpl implements AthleteService {
 	private CategoryDao categoryDao;
 	@EJB
 	private ParticipationDao participationDao;
+	@EJB
+	private TeamDao teamDao;
 
 	@Override
 	public List<AthleteDto> findAthletesByBib(int bib) {
@@ -186,6 +191,17 @@ public class AthleteServiceImpl implements AthleteService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public List<TeamDto> listAllTeams() {
+		List<TeamDto> returnedList = new ArrayList<>();
+		List<TeamEntity> allTeams = teamDao.findAll();
+		for (TeamEntity team : allTeams) {
+			returnedList.add(new TeamDto(team.getId(),team.getAbbreviation(), team.getName()));
+		}
+		
+		return returnedList;
 	}
 
 }
