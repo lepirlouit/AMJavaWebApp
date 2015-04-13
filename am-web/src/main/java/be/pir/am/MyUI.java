@@ -1,5 +1,7 @@
 package be.pir.am;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +67,21 @@ public class MyUI extends UI {
 		layout.setMargin(true);
 		panel.setContent(layout);
 		setContent(panel);
+		layout.addComponent(new Button("Nouvel Athlete", new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				addWindow(new NewAthleteSubWindows(athleteService) {
+					
+					@Override
+					public void callback(AthleteDto athlete) {
+						//athleteService.saveNewAthlete(athlete);
+						
+						
+					}
+				});				
+			}
+		}));
 		final HorizontalLayout searchForm = new HorizontalLayout();
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
@@ -107,7 +124,7 @@ public class MyUI extends UI {
 					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 					VerticalLayout gl = new VerticalLayout();
 					gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
-							+ " - " + selectedAthlete.getBirthdate() + " (" + selectedAthlete.getTeam() + ')'));
+							+ " - " + DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " (" + selectedAthlete.getTeam() + ')'));
 
 					Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
 					for (EventDto event : eventsList) {

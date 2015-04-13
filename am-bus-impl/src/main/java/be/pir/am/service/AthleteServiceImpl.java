@@ -95,9 +95,8 @@ public class AthleteServiceImpl implements AthleteService {
 
 	private AthleteDto createAthleteDto(LicenseEntity license) {
 		AthleteEntity athlete = license.getAthlete();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		AthleteDto athDto = new AthleteDto(athlete.getFirstname(), athlete.getLastname());
-		athDto.setBirthdate(sdf.format(athlete.getBirthdate()));
+		athDto.setBirthdate(athlete.getBirthdate());
 		athDto.setLicenseId(license.getId());
 		athDto.setId(license.getAthlete().getId());
 		athDto.setBib(license.getBib());
