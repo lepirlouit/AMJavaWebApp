@@ -67,21 +67,21 @@ public class MyUI extends UI {
 		layout.setMargin(true);
 		panel.setContent(layout);
 		setContent(panel);
-		layout.addComponent(new Button("Nouvel Athlete", new Button.ClickListener() {
-			
-			@Override
-			public void buttonClick(ClickEvent event) {
-				addWindow(new NewAthleteSubWindows(athleteService) {
-					
-					@Override
-					public void callback(AthleteDto athlete) {
-						//athleteService.saveNewAthlete(athlete);
-						
-						
-					}
-				});				
-			}
-		}));
+//		layout.addComponent(new Button("Nouvel Athlete", new Button.ClickListener() {
+//			
+//			@Override
+//			public void buttonClick(ClickEvent event) {
+//				addWindow(new NewAthleteSubWindows(athleteService) {
+//					
+//					@Override
+//					public void callback(AthleteDto athlete) {
+//						//athleteService.saveNewAthlete(athlete);
+//						
+//						
+//					}
+//				});				
+//			}
+//		}));
 		final HorizontalLayout searchForm = new HorizontalLayout();
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
