@@ -104,6 +104,7 @@ public class AthleteServiceImpl implements AthleteService {
 
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
+		SimpleDateFormat stf = new SimpleDateFormat("HH:mm");
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
 		AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
 		LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
@@ -128,7 +129,6 @@ public class AthleteServiceImpl implements AthleteService {
 		for (EventEntity event : events) {
 			EventDto e = new EventDto();
 			e.setId(event.getId());
-			e.setName(event.getName());
 			boolean needRecord = event.getEventType().getDistance() > 5;
 			e.setNeedRecord(needRecord);
 			RecordEntity record = null;
@@ -141,6 +141,7 @@ public class AthleteServiceImpl implements AthleteService {
 			}
 			boolean contains = false;
 			for (RoundEntity round : event.getRounds()) {
+				e.setName(stf.format(round.getTimeScheduled()) + " - " + event.getName());
 				if (rounds.contains(round)) {
 					contains = true;
 					break;

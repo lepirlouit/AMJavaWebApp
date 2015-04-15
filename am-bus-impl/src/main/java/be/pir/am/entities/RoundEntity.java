@@ -15,12 +15,22 @@ public class RoundEntity extends BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timeScheduled;
 
+	private String name;
+
 	public Date getTimeScheduled() {
 		return timeScheduled;
 	}
 
 	public void setTimeScheduled(Date timeScheduled) {
 		this.timeScheduled = timeScheduled;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
