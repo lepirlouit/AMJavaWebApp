@@ -1,5 +1,6 @@
 package be.pir.am.entities;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -25,7 +26,8 @@ public class EventEntity extends BaseEntity {
 	private Set<CategoryEntity> categories;
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn(name = "event")
-	private Set<RoundEntity> rounds;
+	@org.hibernate.annotations.IndexColumn(name = "seqno", base = 1)
+	private List<RoundEntity> rounds;
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "type", nullable = false)
 	private EventTypeEntity eventType;
@@ -54,11 +56,11 @@ public class EventEntity extends BaseEntity {
 		this.categories = categories;
 	}
 
-	public Set<RoundEntity> getRounds() {
+	public List<RoundEntity> getRounds() {
 		return rounds;
 	}
 
-	public void setRounds(Set<RoundEntity> rounds) {
+	public void setRounds(List<RoundEntity> rounds) {
 		this.rounds = rounds;
 	}
 
