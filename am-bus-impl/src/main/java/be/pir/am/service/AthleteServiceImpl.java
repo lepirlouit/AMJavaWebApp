@@ -7,6 +7,8 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -23,8 +25,8 @@ import be.pir.am.api.dao.CompetitorDao;
 import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dao.LicenseDao;
 import be.pir.am.api.dao.ParticipationDao;
-import be.pir.am.api.dao.TeamDao;
 import be.pir.am.api.dao.RecordDao;
+import be.pir.am.api.dao.TeamDao;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
@@ -80,6 +82,8 @@ public class AthleteServiceImpl implements AthleteService {
 		List<AthleteDto> returnedList = new ArrayList<>();
 		Short minimumAge = category.getMinimumAge();
 		Short maximumAge = category.getMaximumAge();
+		if (maximumAge == 0)
+			maximumAge = 99;
 		Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear() - maximumAge, 1, 1).atStartOfDay()
 				.atZone(ZoneId.systemDefault()).toInstant());
 		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 1, 1).atStartOfDay()
@@ -130,6 +134,14 @@ public class AthleteServiceImpl implements AthleteService {
 				}
 			}
 		}
+		Collections.sort(events, new Comparator<EventEntity>() {
+
+			@Override
+			public int compare(EventEntity o1, EventEntity o2) {
+				return o1.getRounds().get(0).getTimeScheduled().compareTo(o2.getRounds().get(0).getTimeScheduled());
+			}
+		});
+		
 		for (EventEntity event : events) {
 			EventDto e = new EventDto();
 			e.setId(event.getId());
