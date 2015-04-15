@@ -8,6 +8,7 @@ import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
 import be.pir.am.api.dto.EventDto;
+import be.pir.am.api.dto.TeamDto;
 
 @Local
 public interface AthleteService {
@@ -27,4 +28,6 @@ public interface AthleteService {
 	 * @param events
 	 */
 	void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events, CategoryDto category, CompetitionDto competition);
+	
+	List<TeamDto> listAllTeams();
 }

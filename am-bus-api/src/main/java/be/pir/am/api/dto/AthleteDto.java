@@ -1,7 +1,10 @@
 package be.pir.am.api.dto;
 
+import java.util.Date;
+
 public class AthleteDto extends BaseDto {
-	private String firstName, lastName, team, teamShort, birthdate;
+	private String firstName, lastName, team, teamShort;
+	private Date birthdate;
 	private String bib;
 	private int licenseId;
 	private Character gender;
@@ -47,11 +50,11 @@ public class AthleteDto extends BaseDto {
 		this.teamShort = teamShort;
 	}
 
-	public String getBirthdate() {
+	public Date getBirthdate() {
 		return birthdate;
 	}
 
-	public void setBirthdate(String birthdate) {
+	public void setBirthdate(Date birthdate) {
 		this.birthdate = birthdate;
 	}
 
