@@ -115,13 +115,7 @@ public class AthleteServiceImpl implements AthleteService {
 		SimpleDateFormat stf = new SimpleDateFormat("HH:mm");
 		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
 		AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
-		LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
-		LocalDate birthday = athleteEntity.getBirthdate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-		Period p = Period.between(birthday, endOfYear);
-
-		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(athleteEntity.getGender(),
-				new FederationEntity(competition.getFederationId()), (short) p.getYears());
+		List<CategoryEntity> categories = getCategoryForAthlete(competition, athleteEntity);
 		List<EventEntity> events = eventDao.findEventsByCategoryAndCompetition(
 				new CompetitionEntity(competition.getId()), categories);
 		Set<RoundEntity> rounds = new HashSet<>();
@@ -169,26 +163,39 @@ public class AthleteServiceImpl implements AthleteService {
 		return returnedList;
 	}
 
+	private List<CategoryEntity> getCategoryForAthlete(CompetitionDto competition, AthleteEntity athleteEntity) {
+		LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+		//TODO : in place of currentDate, take the end of year of the competition date
+		LocalDate birthday = athleteEntity.getBirthdate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+		Period p = Period.between(birthday, endOfYear);
+
+		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(athleteEntity.getGender(),
+				new FederationEntity(competition.getFederationId()), (short) p.getYears());
+		return categories;
+	}
+
 	@Override
 	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CategoryDto category,
 			CompetitionDto competition) {
 		CompetitorEntity competitor = competitorDao.findCompetitorFetchParticipationsAndRounds(athlete, competition);
 		if (competitor == null) {
 			competitor = new CompetitorEntity();
-			competitor.setAthlete(new AthleteEntity(athlete.getId()));
+			competitor.setAthlete(athleteDao.findById(athlete.getId()));
 			competitor.setParticipations(new ArrayList<>());
 			competitor.setCompetition(new CompetitionEntity(competition.getId()));
 			competitor.setBib(athlete.getBib());
 			competitor.setLicense(new LicenseEntity(athlete.getLicenseId()));
 			competitor.setDisplayname(athlete.getLastName() + ", " + athlete.getFirstName());
 		}
+		AthleteEntity athleteEntity = competitor.getAthlete();
 		for (EventDto event : events) {
 			EventEntity eventEntity = eventDao.findById(event.getId());
 			for (RoundEntity round : eventEntity.getRounds()) {
 				ParticipationEntity participation = findParticipation(competitor, round);
 				if (participation == null) {
 					participation = new ParticipationEntity();
-					participation.setCategoryEntity(new CategoryEntity(category.getId()));
+					participation.setCategoryEntity(getCategoryForAthlete(competition, athleteEntity).get(0));
 					participation.setRound(round);
 					participation.setCompetitors(Arrays.asList(competitor));
 				}
