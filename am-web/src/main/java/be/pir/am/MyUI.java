@@ -116,6 +116,8 @@ public class MyUI extends UI {
 
 			@Override
 			public void valueChange(ValueChangeEvent valueChangeEvent) {
+				results.removeAllComponents();
+				results.addComponent(tb);
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
 				if (selectedAthlete != null) {
 					CompetitionDto competition = new CompetitionDto();
@@ -125,54 +127,59 @@ public class MyUI extends UI {
 					VerticalLayout gl = new VerticalLayout();
 					gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
 							+ " - " + DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " (" + selectedAthlete.getTeam() + ')'));
+					if (eventsList.size() > 0) {
 
-					Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
-					for (EventDto event : eventsList) {
-						HorizontalLayout eventLyt = new HorizontalLayout();
-						eventLyt.setSpacing(true);
-						final BeanFieldGroup<EventDto> binder = new BeanFieldGroup<EventDto>(EventDto.class);
-						binders.add(binder);
-						binder.setBuffered(true);
-						binder.setItemDataSource(event);
-						Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
+						Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
+						for (EventDto event : eventsList) {
+							HorizontalLayout eventLyt = new HorizontalLayout();
+							eventLyt.setSpacing(true);
+							final BeanFieldGroup<EventDto> binder = new BeanFieldGroup<EventDto>(EventDto.class);
+							binders.add(binder);
+							binder.setBuffered(true);
+							binder.setItemDataSource(event);
+							Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
 
-						eventLyt.addComponent(new FormLayout(checkbox));
-						if (event.isNeedRecord()) {
-							TextField recordField = (TextField) binder.buildAndBind("Record (en secondes)", "record");
-							recordField.setNullRepresentation("0,00");
-							eventLyt.addComponent(new FormLayout(recordField));
+							eventLyt.addComponent(new FormLayout(checkbox));
+							if (event.isNeedRecord()) {
+								TextField recordField = (TextField) binder.buildAndBind("Record (en secondes)",
+										"record");
+								recordField.setNullRepresentation("0,00");
+								eventLyt.addComponent(new FormLayout(recordField));
+							}
+							gl.addComponent(eventLyt);
 						}
-						gl.addComponent(eventLyt);
-					}
-					Button inscriptionBtn = new Button("Inscription");
-					inscriptionBtn.addClickListener(new Button.ClickListener() {
-						private static final long serialVersionUID = 1L;
+						Button inscriptionBtn = new Button("Inscription");
+						inscriptionBtn.addClickListener(new Button.ClickListener() {
+							private static final long serialVersionUID = 1L;
 
-						@Override
-						public void buttonClick(ClickEvent event) {
-							try {
-								for (BeanFieldGroup<EventDto> binder : binders) {
-									binder.commit();
+							@Override
+							public void buttonClick(ClickEvent event) {
+								try {
+									for (BeanFieldGroup<EventDto> binder : binders) {
+										binder.commit();
+									}
+
+									athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
+											(CategoryDto) cbxCategory.getValue(), competition);
+									Notification.show("Inscription Ok", Type.WARNING_MESSAGE);
+									@SuppressWarnings("unchecked")
+									Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
+											.getListeners(ValueChangeEvent.class);
+									for (Property.ValueChangeListener vcl : listeners) {
+										vcl.valueChange(valueChangeEvent);
+									}
+								} catch (CommitException e) {
+									Notification.show("Un erreur s'est produite", "Erreur : "
+											+ e.getCause().getMessage(), Type.ERROR_MESSAGE);
 								}
-							} catch (CommitException e) {
-								Notification.show("Un erreur s'est produite", "Erreur : " + e.getCause().getMessage(),
-										Type.ERROR_MESSAGE);
-							}
-							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
-									(CategoryDto) cbxCategory.getValue(), competition);
-							Notification.show("Inscription Ok", Type.HUMANIZED_MESSAGE);
-							@SuppressWarnings("unchecked")
-							Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
-									.getListeners(ValueChangeEvent.class);
-							for (Property.ValueChangeListener vcl : listeners) {
-								vcl.valueChange(valueChangeEvent);
-							}
 
-						}
-					});
-					gl.addComponent(inscriptionBtn);
-					results.removeAllComponents();
-					results.addComponent(tb);
+							}
+						});
+						gl.addComponent(inscriptionBtn);
+					} else {
+						gl.addComponent(new Label(
+								"Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
+					}
 					results.addComponent(gl);
 				}
 			}
@@ -189,12 +196,21 @@ public class MyUI extends UI {
 						(CategoryDto) cbxCategory.getValue());
 				boolean foundAth = athls.size() > 0;
 				if (!foundAth) {
-					Notification.show("Not Found"); // TODO : atheletes non
+					Notification.show("Je ne t'ai pas trouvé dans la base de donnée", Type.ERROR_MESSAGE); // TODO : atheletes non
 													// trouve, create new.
+				} else if (athls.size() > 1) {
+					Notification
+							.show("Plus d'un athlète correspond au critère. Veuillez selectionner dans la colonne de gauche.",
+									Type.WARNING_MESSAGE);
 				}
 				tb.setVisible(foundAth);
 				tb.removeAllItems();
+				results.removeAllComponents();
+				results.addComponent(tb);
 				tb.addItems(athls);
+				if (athls.size() == 1) {
+					tb.setValue(athls.get(0));
+				}
 			}
 		});
 
