@@ -5,6 +5,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import be.pir.am.api.dao.CompetitorDao;
@@ -23,6 +25,10 @@ public class CompetitorDaoImpl extends AbstractEntityDao<CompetitorEntity> imple
 
 	@Override
 	public CompetitorEntity findCompetitor(AthleteDto athlete, CompetitionDto competition) {
+		return getFindCompitorRequest(athlete, competition, false);
+	}
+
+	private CompetitorEntity getFindCompitorRequest(AthleteDto athlete, CompetitionDto competition, boolean fetch) {
 		CompetitionEntity competitionEntity = new CompetitionEntity(competition.getId());
 		AthleteEntity athleteEntity = new AthleteEntity(athlete.getId());
 		
@@ -31,13 +37,19 @@ public class CompetitorDaoImpl extends AbstractEntityDao<CompetitorEntity> imple
 
 		CriteriaQuery<CompetitorEntity> cq = cb.createQuery(CompetitorEntity.class);
 		Root<CompetitorEntity> competitor = cq.from(CompetitorEntity.class);
-
+		Fetch<Object, Object> participations = competitor.fetch("participations", JoinType.LEFT);
+		participations.fetch("round", JoinType.LEFT);
 		cq.where(cb.equal(competitor.get("competition"), competitionEntity), cb.equal(competitor.get("athlete"), athleteEntity));
 		try{
 			return em.createQuery(cq).getSingleResult();
 		}catch(NoResultException e){
 			return null;
 		}
+	}
+
+	@Override
+	public CompetitorEntity findCompetitorFetchParticipationsAndRounds(AthleteDto athlete, CompetitionDto competition) {
+		return getFindCompitorRequest(athlete, competition, true);
 	}
 
 }

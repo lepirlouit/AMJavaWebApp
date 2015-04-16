@@ -9,4 +9,6 @@ import be.pir.am.entities.CompetitorEntity;
 @Local
 public interface CompetitorDao  extends EntityDao<CompetitorEntity> {
 	CompetitorEntity findCompetitor(AthleteDto athlete, CompetitionDto competition);
+
+	CompetitorEntity findCompetitorFetchParticipationsAndRounds(AthleteDto athlete, CompetitionDto competition);
 }

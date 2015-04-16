@@ -172,7 +172,7 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CategoryDto category,
 			CompetitionDto competition) {
-		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
+		CompetitorEntity competitor = competitorDao.findCompetitorFetchParticipationsAndRounds(athlete, competition);
 		if (competitor == null) {
 			competitor = new CompetitorEntity();
 			competitor.setAthlete(new AthleteEntity(athlete.getId()));
@@ -216,11 +216,13 @@ public class AthleteServiceImpl implements AthleteService {
 					}
 				} else {
 					competitor.getParticipations().remove(participation);
-					participationDao.delete(participation);
+					if (participation.getId() != null) {
+						participationDao.delete(participation);
+					}
 				}
 			}
 		}
-		if (competitor.getParticipations().size() == 0) {
+		if (competitor.getParticipations().size() == 0 && competitor.getId() != null) {
 			competitorDao.delete(competitor);
 		} else {
 			//TODO send mail to competitor
