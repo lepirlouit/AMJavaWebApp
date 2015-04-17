@@ -74,4 +74,11 @@ public class EventDto extends BaseDto {
 		this.recordId = recordId;
 	}
 
+	@Override
+	public String toString() {
+		return "EventDto [name=" + name + ", abbreviation=" + abbreviation + ", minimumAge=" + minimumAge
+				+ ", maximumAge=" + maximumAge + ", checked=" + checked + ", needRecord=" + needRecord + ", record="
+				+ record + ", recordId=" + recordId + "]";
+	}
+
 }

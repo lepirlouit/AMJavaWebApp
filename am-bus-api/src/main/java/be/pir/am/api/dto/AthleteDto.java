@@ -82,4 +82,11 @@ public class AthleteDto extends BaseDto {
 		this.gender = gender;
 	}
 
+	@Override
+	public String toString() {
+		return "AthleteDto [firstName=" + firstName + ", lastName=" + lastName + ", team=" + team + ", teamShort="
+				+ teamShort + ", birthdate=" + birthdate + ", bib=" + bib + ", licenseId=" + licenseId + ", gender="
+				+ gender + "]";
+	}
+
 }

@@ -34,5 +34,10 @@ public class CategoryDto extends BaseDto {
 	public void setGender(Character gender) {
 		this.gender = gender;
 	}
+	@Override
+	public String toString() {
+		return "CategoryDto [name=" + name + ", abbreviation=" + abbreviation + ", minimumAge=" + minimumAge
+				+ ", maximumAge=" + maximumAge + ", gender=" + gender + "]";
+	}
 
 }
