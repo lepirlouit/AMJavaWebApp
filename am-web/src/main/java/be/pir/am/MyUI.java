@@ -54,6 +54,7 @@ import com.vaadin.ui.themes.Reindeer;
 public class MyUI extends UI {
 
 	private static final long serialVersionUID = 1L;
+	private static final TimeConverter TIME_CONVERTER = new TimeConverter();
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -141,9 +142,10 @@ public class MyUI extends UI {
 
 							eventLyt.addComponent(new FormLayout(checkbox));
 							if (event.isNeedRecord()) {
-								TextField recordField = (TextField) binder.buildAndBind("Record (en secondes)",
+								TextField recordField = (TextField) binder.buildAndBind("Record",
 										"record");
-								recordField.setNullRepresentation("0,00");
+								recordField.setNullRepresentation("0'00\"00");
+								recordField.setConverter(TIME_CONVERTER);
 								eventLyt.addComponent(new FormLayout(recordField));
 							}
 							gl.addComponent(eventLyt);
