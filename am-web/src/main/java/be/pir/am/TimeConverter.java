@@ -34,7 +34,7 @@ public class TimeConverter implements Converter<String, BigDecimal> {
 			}
 			return timeInSeconds;
 		}
-		throw new ConversionException("Cannot be converted {0}");
+		throw new ConversionException("[" + value + "] n'est pas valide. Format : 0'00\"00 (min'secondes\"centièmes)");
 	}
 
 	@Override
