@@ -9,6 +9,8 @@ import java.util.Set;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.apache.log4j.Logger;
+
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
@@ -52,12 +54,13 @@ import com.vaadin.ui.themes.Reindeer;
 @Theme("runo")
 @Widgetset("be.pir.am.MyAppWidgetset")
 public class MyUI extends UI {
-
+private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 	private static final long serialVersionUID = 1L;
 	private static final TimeConverter TIME_CONVERTER = new TimeConverter();
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
+		LOGGER.info("Page Loaded");
 		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
 
@@ -120,6 +123,7 @@ public class MyUI extends UI {
 				results.removeAllComponents();
 				results.addComponent(tb);
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
+				LOGGER.info("Selected in table : " + selectedAthlete);
 				if (selectedAthlete != null) {
 					CompetitionDto competition = new CompetitionDto();
 					competition.setId(71);
@@ -146,6 +150,7 @@ public class MyUI extends UI {
 										"record");
 								recordField.setNullRepresentation("0'00\"00");
 								recordField.setConverter(TIME_CONVERTER);
+								recordField.setConversionError("{1}");
 								eventLyt.addComponent(new FormLayout(recordField));
 							}
 							gl.addComponent(eventLyt);
@@ -157,13 +162,16 @@ public class MyUI extends UI {
 							@Override
 							public void buttonClick(ClickEvent event) {
 								try {
+									LOGGER.debug("Click Inscription button with events in list : ");
 									for (BeanFieldGroup<EventDto> binder : binders) {
+										LOGGER.debug("\t" + binder.getItemDataSource().getBean());
 										binder.commit();
 									}
 
 									athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
 											(CategoryDto) cbxCategory.getValue(), competition);
 									Notification.show("Inscription Ok", Type.WARNING_MESSAGE);
+									LOGGER.info("Inscription ok for " + selectedAthlete);
 									@SuppressWarnings("unchecked")
 									Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
 											.getListeners(ValueChangeEvent.class);
@@ -171,6 +179,7 @@ public class MyUI extends UI {
 										vcl.valueChange(valueChangeEvent);
 									}
 								} catch (CommitException e) {
+									LOGGER.info("error occured for user : " + e.getCause().getMessage());
 									Notification.show("Un erreur s'est produite", "Erreur : "
 											+ e.getCause().getMessage(), Type.ERROR_MESSAGE);
 								}
@@ -193,9 +202,10 @@ public class MyUI extends UI {
 
 			@Override
 			public void buttonClick(ClickEvent clevent) {
-
+LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"] category ["+cbxCategory.getValue()+"]");
 				List<AthleteDto> athls = athleteService.findAthletesByBibAndCategory(bibProperty.getValue(),
 						(CategoryDto) cbxCategory.getValue());
+				LOGGER.debug("Result list Size : " + athls.size());
 				boolean foundAth = athls.size() > 0;
 				if (!foundAth) {
 					Notification.show("Je ne t'ai pas trouvé dans la base de donnée", Type.ERROR_MESSAGE); // TODO : atheletes non
