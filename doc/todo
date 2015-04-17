@@ -4,4 +4,5 @@ TODO /
 - impression des feuilles/ par event, qui est inscrit à quoi
 
 - handle epreuves multiples
-- record : encodages en minutes/secondes/centiemes
+
+- afficher dans la dropdown des catégories, l'année de naissance.
