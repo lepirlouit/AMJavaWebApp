@@ -82,12 +82,17 @@ public class AthleteDto extends BaseDto {
 		this.gender = gender;
 	}
 
+
 	public String getCategory() {
 		return category;
 	}
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public String getDisplayName() {
+		return lastName + ", " + firstName;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:wicket="http://wicket.apache.org/">
 <head>
 <meta charset="UTF-8">
 <style>
@@ -37,26 +37,29 @@ table{
 </style>
 </head>
 <body>
-<div class="epreuve">
+<div class="epreuve" wicket:id="event">
 <div class="header">
-<div class="number">23</div>
-<div class="hour">20:15</div>
-<span class="title">Saut en Hauteur</span>
+<div class="number" wicket:id="number">23</div>
+<div class="hour" wicket:id="hour">20:15</div>
+<span class="title" wicket:id="name">Saut en Hauteur</span>
 </div>
 <table>
 <thead>
 <tr><th>Dossard</th><th>Nom Prenom</th><th>Club</th><th>annee naissance</th><th>Catégorie</th></tr>
 </thead>
 <tbody>
-<tr><td>2899</td><td>De Scheemaekere, Quentin</td><td>RRCB</td><td>10/08/1988</td><td>Seniors (M)</td>
+<tr wicket:id="athlete"><td wicket:id="bib">2899</td><td wicket:id="displayName">De Scheemaekere, Quentin</td><td wicket:id="teamShort">RRCB</td><td wicket:id="birthdate">10/08/1988</td><td wicket:id="category">Seniors (M)</td></tr>
+<tr wicket:id="emptyLine"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<wicket:remove>
 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+</wicket:remove>
 </tbody>
 </table>
 </div>
+<wicket:remove>
 <div class="epreuve">
 <div class=header>
 <div class="number">8</div>
@@ -70,5 +73,6 @@ table{
 </tbody>
 </table>
 </div>
+</wicket:remove>
 </body>
 </html>
