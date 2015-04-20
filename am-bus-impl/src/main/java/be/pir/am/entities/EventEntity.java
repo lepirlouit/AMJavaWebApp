@@ -24,13 +24,14 @@ public class EventEntity extends BaseEntity {
 	@ManyToMany
 	@JoinTable(name = "eventcategories", joinColumns = { @JoinColumn(name = "event", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "category", referencedColumnName = "ID") })
 	private Set<CategoryEntity> categories;
-	@OneToMany(orphanRemoval = true)
-	@JoinColumn(name = "event")
+	@OneToMany(orphanRemoval = true, mappedBy = "event")
 	@org.hibernate.annotations.IndexColumn(name = "seqno", base = 1)
 	private List<RoundEntity> rounds;
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "type", nullable = false)
 	private EventTypeEntity eventType;
+	@Column(name = "seqno")
+	private Integer number;
 
 	public CompetitionEntity getCompetition() {
 		return competition;
@@ -70,6 +71,14 @@ public class EventEntity extends BaseEntity {
 
 	public void setEventType(EventTypeEntity eventType) {
 		this.eventType = eventType;
+	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 
 }

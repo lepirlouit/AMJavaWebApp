@@ -30,4 +30,6 @@ public interface AthleteService {
 	void subscribeAthleteToEvents(AthleteDto competitor, List<EventDto> events, CategoryDto category, CompetitionDto competition);
 	
 	List<TeamDto> listAllTeams();
+
+	List<EventDto> getAllParticipations(CompetitionDto competition);
 }

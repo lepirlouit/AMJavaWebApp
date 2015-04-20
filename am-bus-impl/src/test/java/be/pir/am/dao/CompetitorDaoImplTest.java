@@ -1,5 +1,7 @@
 package be.pir.am.dao;
 
+import java.util.List;
+
 import org.junit.Assert;
 
 import be.pir.am.api.dto.AthleteDto;
@@ -10,6 +12,7 @@ import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.CountryEntity;
 import be.pir.am.entities.EventEntity;
+import be.pir.am.entities.EventTypeEntity;
 import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
@@ -21,7 +24,8 @@ import com.bm.testsuite.BaseSessionBeanFixture;
 public class CompetitorDaoImplTest extends BaseSessionBeanFixture<CompetitorDaoImpl> {
 	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
 		TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
-		CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class };
+			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class,
+			EventTypeEntity.class};
 	
 	/**
 	 * Constructor.
@@ -48,5 +52,18 @@ public class CompetitorDaoImplTest extends BaseSessionBeanFixture<CompetitorDaoI
 		competition.setId(71);
 		CompetitorEntity competitor = toTest.findCompetitor(athlete, competition);
 		Assert.assertNotNull(competitor);
+	}
+
+	public void testFindAllParticipations() {
+		final CompetitorDaoImpl toTest = this.getBeanToTest();
+		CompetitionEntity competition = new CompetitionEntity(71);
+
+		List<CompetitorEntity> allParticipations = toTest
+				.getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(competition);
+
+		for (CompetitorEntity competitorEntity : allParticipations) {
+			System.out.println(competitorEntity.getDisplayname());
+		}
+		Assert.assertEquals(2, allParticipations.size());
 	}
 }

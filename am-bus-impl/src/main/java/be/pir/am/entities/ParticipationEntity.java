@@ -21,7 +21,7 @@ public class ParticipationEntity extends BaseEntity {
 	private Integer heat = 0;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category", nullable = false)
-	private CategoryEntity categoryEntity;
+	private CategoryEntity category;
 
 	/**
 	 * en général il y a toujours qu'un seul participant pour chaque
@@ -46,12 +46,12 @@ public class ParticipationEntity extends BaseEntity {
 		this.heat = heat;
 	}
 
-	public CategoryEntity getCategoryEntity() {
-		return categoryEntity;
+	public CategoryEntity getCategory() {
+		return category;
 	}
 
-	public void setCategoryEntity(CategoryEntity categoryEntity) {
-		this.categoryEntity = categoryEntity;
+	public void setCategory(CategoryEntity categoryEntity) {
+		this.category = categoryEntity;
 	}
 
 	public List<CompetitorEntity> getCompetitors() {
@@ -66,7 +66,7 @@ public class ParticipationEntity extends BaseEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((categoryEntity == null) ? 0 : categoryEntity.hashCode());
+		result = (prime * result) + ((category == null) ? 0 : category.hashCode());
 		result = (prime * result) + ((competitors == null) ? 0 : competitors.hashCode());
 		result = (prime * result) + ((round == null) ? 0 : round.hashCode());
 		return result;
@@ -84,11 +84,11 @@ public class ParticipationEntity extends BaseEntity {
 			return false;
 		}
 		ParticipationEntity other = (ParticipationEntity) obj;
-		if (categoryEntity == null) {
-			if (other.categoryEntity != null) {
+		if (category == null) {
+			if (other.category != null) {
 				return false;
 			}
-		} else if (!categoryEntity.equals(other.categoryEntity)) {
+		} else if (!category.equals(other.category)) {
 			return false;
 		}
 		if (competitors == null) {

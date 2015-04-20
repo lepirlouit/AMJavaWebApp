@@ -1,5 +1,7 @@
 package be.pir.am.dao;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -15,6 +17,13 @@ import be.pir.am.api.dto.CompetitionDto;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
+import be.pir.am.entities.CompetitorEntity_;
+import be.pir.am.entities.LicenseEntity;
+import be.pir.am.entities.LicenseEntity_;
+import be.pir.am.entities.ParticipationEntity;
+import be.pir.am.entities.ParticipationEntity_;
+import be.pir.am.entities.RoundEntity;
+import be.pir.am.entities.RoundEntity_;
 
 @Stateless
 public class CompetitorDaoImpl extends AbstractEntityDao<CompetitorEntity> implements CompetitorDao {
@@ -37,9 +46,11 @@ public class CompetitorDaoImpl extends AbstractEntityDao<CompetitorEntity> imple
 
 		CriteriaQuery<CompetitorEntity> cq = cb.createQuery(CompetitorEntity.class);
 		Root<CompetitorEntity> competitor = cq.from(CompetitorEntity.class);
-		Fetch<Object, Object> participations = competitor.fetch("participations", JoinType.LEFT);
-		participations.fetch("round", JoinType.LEFT);
-		cq.where(cb.equal(competitor.get("competition"), competitionEntity), cb.equal(competitor.get("athlete"), athleteEntity));
+		Fetch<CompetitorEntity, ParticipationEntity> participations = competitor.fetch(
+				CompetitorEntity_.participations, JoinType.LEFT);
+		participations.fetch(ParticipationEntity_.round, JoinType.LEFT);
+		cq.where(cb.equal(competitor.get(CompetitorEntity_.competition), competitionEntity),
+				cb.equal(competitor.get(CompetitorEntity_.athlete), athleteEntity));
 		try{
 			return em.createQuery(cq).getSingleResult();
 		}catch(NoResultException e){
@@ -52,4 +63,20 @@ public class CompetitorDaoImpl extends AbstractEntityDao<CompetitorEntity> imple
 		return getFindCompitorRequest(athlete, competition, true);
 	}
 
+	@Override
+	public List<CompetitorEntity> getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(
+			CompetitionEntity competition) {
+		EntityManager em = getEntityManager();
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<CompetitorEntity> cq = cb.createQuery(CompetitorEntity.class);
+		Root<CompetitorEntity> competitor = cq.from(CompetitorEntity.class);
+		Fetch<CompetitorEntity, LicenseEntity> license = competitor.fetch(CompetitorEntity_.license);
+		license.fetch(LicenseEntity_.team);
+		Fetch<CompetitorEntity, ParticipationEntity> participation = competitor.fetch(CompetitorEntity_.participations);
+		participation.fetch(ParticipationEntity_.category);
+		Fetch<ParticipationEntity, RoundEntity> round = participation.fetch(ParticipationEntity_.round);
+		round.fetch(RoundEntity_.event);
+
+		return em.createQuery(cq.distinct(true)).getResultList();
+	}
 }

@@ -10,8 +10,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -195,7 +197,7 @@ public class AthleteServiceImpl implements AthleteService {
 				ParticipationEntity participation = findParticipation(competitor, round);
 				if (participation == null) {
 					participation = new ParticipationEntity();
-					participation.setCategoryEntity(getCategoryForAthlete(competition, athleteEntity).get(0));
+					participation.setCategory(getCategoryForAthlete(competition, athleteEntity).get(0));
 					participation.setRound(round);
 					participation.setCompetitors(Arrays.asList(competitor));
 				}
@@ -257,5 +259,55 @@ public class AthleteServiceImpl implements AthleteService {
 		
 		return returnedList;
 	}
+	@Override
+	public List<EventDto> getAllParticipations(CompetitionDto competition) {
+		List<CompetitorEntity> allCompetitors = competitorDao
+				.getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(new CompetitionEntity(competition.getId()));
+		Map<EventDto, List<AthleteDto>> events = new HashMap<>();
+		for (CompetitorEntity competitor : allCompetitors) {
+			AthleteDto athlete = createAthleteDto(competitor.getLicense());
+			for (ParticipationEntity participation : competitor.getParticipations()) {
+				athlete.setCategory(participation.getCategory().getName());
+				EventDto event = createEventDto(participation.getRound().getEvent());
+				List<AthleteDto> participantsInMap = events.get(event);
+				if (participantsInMap == null) {
+					participantsInMap = new ArrayList<AthleteDto>();
+					event.setParticipants(participantsInMap);
+					events.put(event, participantsInMap);
+				}
+				participantsInMap.add(athlete);
+			}
+		}
 
+
+		ArrayList<EventDto> eventsList = new ArrayList<EventDto>(events.keySet());
+		//order each participantsList (in events) (by name)
+		Comparator<AthleteDto> eventsComparator = new Comparator<AthleteDto>() {
+
+			@Override
+			public int compare(AthleteDto o1, AthleteDto o2) {
+				return o1.getLastName().compareTo(o2.getLastName());
+			}
+		};
+		for (EventDto eventDto : eventsList) {
+			Collections.sort(eventDto.getParticipants(), eventsComparator);
+		}
+		//order EventsList by EventNumber
+		Collections.sort(eventsList, new Comparator<EventDto>() {
+
+			@Override
+			public int compare(EventDto o1, EventDto o2) {
+				return o1.getNumber() - o2.getNumber();
+			}
+		});
+		return eventsList;
+	}
+
+	private EventDto createEventDto(EventEntity event) {
+		EventDto eventDto = new EventDto();
+		eventDto.setName(event.getName());
+		eventDto.setNumber(event.getNumber());
+		eventDto.setHour(new SimpleDateFormat("HH:mm").format(event.getRounds().get(0).getTimeScheduled()));
+		return eventDto;
+	}
 }
