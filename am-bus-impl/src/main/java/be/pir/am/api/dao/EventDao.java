@@ -11,4 +11,5 @@ import be.pir.am.entities.EventEntity;
 @Local
 public interface EventDao extends EntityDao<EventEntity> {
 	List<EventEntity> findEventsByCategoryAndCompetition(CompetitionEntity competition, List<CategoryEntity> categories);
+	List<EventEntity> findAllEventsInCompetition(CompetitionEntity competition);
 }

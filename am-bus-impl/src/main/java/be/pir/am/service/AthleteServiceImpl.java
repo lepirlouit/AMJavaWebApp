@@ -261,20 +261,24 @@ public class AthleteServiceImpl implements AthleteService {
 	}
 	@Override
 	public List<EventDto> getAllParticipations(CompetitionDto competition) {
-		List<CompetitorEntity> allCompetitors = competitorDao
-				.getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(new CompetitionEntity(competition.getId()));
+		CompetitionEntity competitionEntity = new CompetitionEntity(competition.getId());
+		List<EventEntity> findAllEventsInCompetition = eventDao.findAllEventsInCompetition(competitionEntity);
 		Map<EventDto, List<AthleteDto>> events = new HashMap<>();
+		for (EventEntity eventEntity : findAllEventsInCompetition) {
+			EventDto event = createEventDto(eventEntity);
+			List<AthleteDto> participantsInMap = new ArrayList<AthleteDto>();
+			event.setParticipants(participantsInMap);
+			events.put(event, participantsInMap);
+		}
+		List<CompetitorEntity> allCompetitors = competitorDao
+				.getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(competitionEntity);
 		for (CompetitorEntity competitor : allCompetitors) {
 			AthleteDto athlete = createAthleteDto(competitor.getLicense());
 			for (ParticipationEntity participation : competitor.getParticipations()) {
 				athlete.setCategory(participation.getCategory().getName());
 				EventDto event = createEventDto(participation.getRound().getEvent());
 				List<AthleteDto> participantsInMap = events.get(event);
-				if (participantsInMap == null) {
-					participantsInMap = new ArrayList<AthleteDto>();
-					event.setParticipants(participantsInMap);
-					events.put(event, participantsInMap);
-				}
+
 				participantsInMap.add(athlete);
 			}
 		}
