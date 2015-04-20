@@ -4,7 +4,10 @@
 	version="2.5">
 
 	<display-name>am-web-wicket</display-name>
-
+	<context-param>
+		<param-name>configuration</param-name>
+		<param-value>deployment</param-value>
+	</context-param>
 	<!--
 		There are three means to configure Wickets configuration mode and they 
 		are tested in the order given.
