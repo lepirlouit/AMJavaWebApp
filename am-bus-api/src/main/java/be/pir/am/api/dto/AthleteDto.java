@@ -3,7 +3,7 @@ package be.pir.am.api.dto;
 import java.util.Date;
 
 public class AthleteDto extends BaseDto {
-	private String firstName, lastName, team, teamShort;
+	private String firstName, lastName, team, teamShort, category;
 	private Date birthdate;
 	private String bib;
 	private int licenseId;
@@ -80,6 +80,14 @@ public class AthleteDto extends BaseDto {
 
 	public void setGender(Character gender) {
 		this.gender = gender;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	@Override

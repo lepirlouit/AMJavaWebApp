@@ -1,14 +1,17 @@
 package be.pir.am.api.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class EventDto extends BaseDto {
-	private String name, abbreviation;
+	private String name, abbreviation, hour;
 	private Short minimumAge, maximumAge;
 	private boolean checked;
 	private boolean needRecord;
 	private BigDecimal record;
 	private Integer recordId;
+	private List<AthleteDto> participants;
+	private int number;
 
 	public String getName() {
 		return name;
@@ -72,6 +75,30 @@ public class EventDto extends BaseDto {
 
 	public void setRecordId(Integer recordId) {
 		this.recordId = recordId;
+	}
+
+	public List<AthleteDto> getParticipants() {
+		return participants;
+	}
+
+	public void setParticipants(List<AthleteDto> participants) {
+		this.participants = participants;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public String getHour() {
+		return hour;
+	}
+
+	public void setHour(String hour) {
+		this.hour = hour;
 	}
 
 	@Override
