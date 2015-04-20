@@ -19,6 +19,7 @@ import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.CountryEntity;
 import be.pir.am.entities.EventEntity;
+import be.pir.am.entities.EventTypeEntity;
 import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
@@ -30,7 +31,8 @@ import com.bm.testsuite.BaseSessionBeanFixture;
 public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServiceImpl> {
 	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
 			TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
-			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class };
+			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class,
+			EventTypeEntity.class};
 
 	/**
 	 * Constructor.
@@ -107,6 +109,19 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
 
 		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
 
+	}
+
+	public void testFindAllCompetitors() {
+		CompetitionDto competition = new CompetitionDto();
+		competition.setId(71);
+		final AthleteServiceImpl toTest = this.getBeanToTest();
+		List<EventDto> allParticipations = toTest.getAllParticipations(competition);
+		for (EventDto eventDto : allParticipations) {
+			System.out.println(eventDto);
+			for (AthleteDto athleteDto : eventDto.getParticipants()) {
+				System.out.println(athleteDto);
+			}
+		}
 	}
 
 }
