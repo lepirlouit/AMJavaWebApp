@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -27,7 +28,9 @@ public class ParticipationEntity extends BaseEntity {
 	 * en général il y a toujours qu'un seul participant pour chaque
 	 * participation, sauf pour un relais
 	 */
-	@ManyToMany(mappedBy = "participations")
+	@ManyToMany
+	@org.hibernate.annotations.IndexColumn(name = "seqno", base = 1)
+	@JoinTable(name = "participants", joinColumns = {@JoinColumn(name = "participation", referencedColumnName = "ID")}, inverseJoinColumns = {@JoinColumn(name = "competitor", referencedColumnName = "ID")})
 	private List<CompetitorEntity> competitors;
 
 	public RoundEntity getRound() {

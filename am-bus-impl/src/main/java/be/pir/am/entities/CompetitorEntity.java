@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -29,10 +28,7 @@ public class CompetitorEntity extends BaseEntity {
 	@Column(length = 256)
 	private String displayname;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	//	@OrderColumn(name = "seqno", columnDefinition = "smallint")
-	@org.hibernate.annotations.IndexColumn(name = "seqno", base = 1)
-	@JoinTable(name = "participants", joinColumns = { @JoinColumn(name = "competitor", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "participation", referencedColumnName = "ID") })
+	@ManyToMany(mappedBy = "competitors", cascade = CascadeType.ALL)
 	private List<ParticipationEntity> participations;
 
 	public AthleteEntity getAthlete() {
