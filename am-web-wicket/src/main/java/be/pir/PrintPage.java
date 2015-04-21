@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 
+import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -29,6 +30,8 @@ public class PrintPage extends WebPage {
 		List<EventDto> events = athleteService.getAllParticipations(competition);
 		add(new PropertyListView<EventDto>("event", events) {
 
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void populateItem(ListItem<EventDto> item) {
 				item.add(new Label("number"));
@@ -37,12 +40,14 @@ public class PrintPage extends WebPage {
 				final int subscribed = item.getModelObject().getParticipants().size();
 				item.add(new PropertyListView<AthleteDto>("athlete", item.getModelObject().getParticipants()) {
 
+					private static final long serialVersionUID = 1L;
+
 					@Override
 					protected void populateItem(ListItem<AthleteDto> athleteItem) {
 						athleteItem.add(new Label("bib"));
 						athleteItem.add(new Label("displayName"));
 						athleteItem.add(new Label("teamShort"));
-						athleteItem.add(new Label("birthdate"));
+						athleteItem.add(DateLabel.forDatePattern("birthdate", "dd/MM/yyyy"));
 						athleteItem.add(new Label("category"));
 					}
 				});
