@@ -88,7 +88,7 @@ public class AthleteServiceImpl implements AthleteService {
 			maximumAge = 99;
 		Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear() - maximumAge, 1, 1).atStartOfDay()
 				.atZone(ZoneId.systemDefault()).toInstant());
-		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 1, 1).atStartOfDay()
+		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 12, 31).atStartOfDay()
 				.atZone(ZoneId.systemDefault()).toInstant());
 
 		List<LicenseEntity> results = athleteDao.findAthleteByBibGenderAndBirthdayMinMax(String.valueOf(bib),
