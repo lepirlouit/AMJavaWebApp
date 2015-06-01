@@ -26,7 +26,7 @@ public class PrintPage extends WebPage {
 	public PrintPage(final PageParameters parameters) {
 		super(parameters);
 		CompetitionDto competition = new CompetitionDto();
-		competition.setId(71);
+		competition.setId(1);
 		List<EventDto> events = athleteService.getAllParticipations(competition);
 		add(new PropertyListView<EventDto>("event", events) {
 

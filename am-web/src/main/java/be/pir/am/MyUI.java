@@ -126,7 +126,7 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 				LOGGER.info("Selected in table : " + selectedAthlete);
 				if (selectedAthlete != null) {
 					CompetitionDto competition = new CompetitionDto();
-					competition.setId(71);
+					competition.setId(1);
 					competition.setFederationId(10);
 					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 					VerticalLayout gl = new VerticalLayout();
