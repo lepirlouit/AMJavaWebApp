@@ -32,4 +32,6 @@ public interface AthleteService {
 	List<TeamDto> listAllTeams();
 
 	List<EventDto> getAllParticipations(CompetitionDto competition);
+	
+	CompetitionDto getCompetitionWithId(Number id);
 }

@@ -23,6 +23,7 @@ import javax.ejb.TransactionAttributeType;
 
 import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.api.dao.CategoryDao;
+import be.pir.am.api.dao.CompetitionDao;
 import be.pir.am.api.dao.CompetitorDao;
 import be.pir.am.api.dao.EventDao;
 import be.pir.am.api.dao.LicenseDao;
@@ -58,6 +59,8 @@ public class AthleteServiceImpl implements AthleteService {
 	private EventDao eventDao;
 	@EJB
 	private CompetitorDao competitorDao;
+	@EJB
+	private CompetitionDao competitionDao;
 	@EJB
 	private CategoryDao categoryDao;
 	@EJB
@@ -313,5 +316,19 @@ public class AthleteServiceImpl implements AthleteService {
 		eventDto.setNumber(event.getNumber());
 		eventDto.setHour(new SimpleDateFormat("HH:mm").format(event.getRounds().get(0).getTimeScheduled()));
 		return eventDto;
+	}
+
+	@Override
+	public CompetitionDto getCompetitionWithId(Number id) {
+		return createCompetitionDto(competitionDao.findById(id));
+	}
+
+	private CompetitionDto createCompetitionDto(CompetitionEntity entity) {
+		CompetitionDto competitionDto = new CompetitionDto();
+		competitionDto.setId(entity.getId());
+		competitionDto.setName(entity.getName());
+		competitionDto.setStartDate(entity.getStartDate());
+		competitionDto.setFederationId(entity.getFederation().getId());
+		return competitionDto;
 	}
 }

@@ -63,8 +63,8 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		LOGGER.info("Page Loaded");
 		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
-
-		Panel panel = new Panel("Inscription à la competition RRCB - Grand PRix du Racing (Samedi 20 juin 2015)");
+		CompetitionDto competition = athleteService.getCompetitionWithId(1);
+		Panel panel = new Panel("Inscription à la competition RRCB - "+competition.getName()+" ("+new SimpleDateFormat("EEEE d MMMMM yyyy",getLocale()).format(competition.getStartDate())+")");
 
 		final VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
@@ -125,9 +125,6 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
 				LOGGER.info("Selected in table : " + selectedAthlete);
 				if (selectedAthlete != null) {
-					CompetitionDto competition = new CompetitionDto();
-					competition.setId(1);
-					competition.setFederationId(10);
 					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 					VerticalLayout gl = new VerticalLayout();
 					gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()

@@ -1,10 +1,22 @@
 package be.pir.am.api.dto;
 
+import java.util.Date;
+
 public class CompetitionDto extends BaseDto {
 	private String name, abbreviation;
 	private Short minimumAge, maximumAge;
 	private Character gender;
 	private int federationId;
+
+	private Date startDate;
+	
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 
 	public String getName() {
 		return name;
