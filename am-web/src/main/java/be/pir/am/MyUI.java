@@ -64,7 +64,7 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
 
-		Panel panel = new Panel("Inscrption à la competition RRCB - Meeting Express (jeudi 23 avril 2015)");
+		Panel panel = new Panel("Inscription à la competition RRCB - Grand Prix du Racing (Samedi 20 juin 2015)");
 
 		final VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(true);
