@@ -315,6 +315,7 @@ public class AthleteServiceImpl implements AthleteService {
 		eventDto.setName(event.getName());
 		eventDto.setNumber(event.getNumber());
 		eventDto.setHour(new SimpleDateFormat("HH:mm").format(event.getRounds().get(0).getTimeScheduled()));
+		eventDto.setAbbreviation(event.getAbbreviation());
 		return eventDto;
 	}
 

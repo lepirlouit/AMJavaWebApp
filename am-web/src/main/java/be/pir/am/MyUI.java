@@ -64,7 +64,7 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
 		CompetitionDto competition = athleteService.getCompetitionWithId(1);
-		Panel panel = new Panel("Inscription à la competition RRCB - " + competition.getName() + " ("
+		Panel panel = new Panel("Inscription à la compétition RRCB - " + competition.getName() + " ("
 				+ new SimpleDateFormat("EEEE d MMMMM yyyy", getLocale()).format(competition.getStartDate()) + ")");
 
 		final VerticalLayout layout = new VerticalLayout();

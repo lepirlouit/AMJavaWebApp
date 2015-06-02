@@ -31,6 +31,12 @@
 	position:absolute;
 	font-size:x-large;
 }
+.abbreviation{
+	bottom:-1px;
+	left:-1px;
+	position:absolute;
+	font-size:x-large;
+}
 table{
 	width:100%;
 	border-collapse: collapse;
@@ -42,11 +48,12 @@ table{
 <div class="header">
 <div class="number" wicket:id="number">23</div>
 <div class="hour" wicket:id="hour">20:15</div>
+<div class="abbreviation" wicket:id="abbreviation">Hauteur D</div>
 <span class="title" wicket:id="name">Saut en Hauteur</span>
 </div>
 <table>
 <thead>
-<tr><th>Dossard</th><th>Nom Prenom</th><th>Club</th><th>annee naissance</th><th>Catégorie</th></tr>
+<tr><th>Dossard</th><th>Nom Prénom</th><th>Club</th><th>date de naissance</th><th>Catégorie</th></tr>
 </thead>
 <tbody>
 <tr wicket:id="athlete"><td wicket:id="bib">2899</td><td wicket:id="displayName">De Scheemaekere, Quentin</td><td wicket:id="teamShort">RRCB</td><td wicket:id="birthdate">10/08/1988</td><td wicket:id="category">Seniors (M)</td></tr>
@@ -65,6 +72,7 @@ table{
 <div class=header>
 <div class="number">8</div>
 <div class="hour">20:15</div>
+<div class="abbreviation">Perche H</div>
 <span class="title">Saut perche</span>
 </div>
 <table>

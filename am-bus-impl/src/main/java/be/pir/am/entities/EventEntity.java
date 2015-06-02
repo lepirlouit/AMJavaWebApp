@@ -32,6 +32,10 @@ public class EventEntity extends BaseEntity {
 	private EventTypeEntity eventType;
 	@Column(name = "seqno")
 	private Integer number;
+	@Column(length = 16)
+	private String abbreviation;
+	@Column(length = 128)
+	private String info;
 
 	public CompetitionEntity getCompetition() {
 		return competition;
@@ -79,6 +83,22 @@ public class EventEntity extends BaseEntity {
 
 	public void setNumber(Integer number) {
 		this.number = number;
+	}
+
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 
 }
