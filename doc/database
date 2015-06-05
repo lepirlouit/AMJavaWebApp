@@ -7,3 +7,34 @@ C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\b
 #start/stop the database :
 C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pg_ctl start -D "C:\Users\%USERNAME%\AppData\Local\TimeTronics\AthleticsManager Server\data"
 C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pg_ctl stop -D "C:\Users\%USERNAME%\AppData\Local\TimeTronics\AthleticsManager Server\data"
+
+#SQL Scripts :
+##
+# 
+// select all participations
+SELECT 
+  competitors.displayname AS "Nom, Prénom", 
+  competitors.bib AS "Dossard", 
+  teams.abbreviation AS "Club", 
+  events.name AS "Epreuve", 
+  records.value
+FROM 
+  public.competitors
+  left join participants
+	on participants.competitor=competitors.id
+  left join licenses
+    on competitors.license = licenses.id
+  left join teams
+	on licenses.team = teams.id
+  left join athletes
+	on competitors.athlete = athletes.id
+  left join participations
+    on participants.participation=participations.id
+  left join rounds
+    on participations.round = rounds.id
+  left join events
+    on rounds.event = events.id
+  left join Records
+	on records.athlete=athletes.id
+   AND records.eventtype = events.type;
+
