@@ -8,6 +8,12 @@ C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\b
 C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pg_ctl start -D "C:\Users\%USERNAME%\AppData\Local\TimeTronics\AthleticsManager Server\data"
 C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pg_ctl stop -D "C:\Users\%USERNAME%\AppData\Local\TimeTronics\AthleticsManager Server\data"
 
+#SQL Logs, add in data\postgresql.conf
+log_directory = 'pg_log'                    
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+log_statement = 'all'
+
+
 #SQL Scripts :
 ##
 # 
