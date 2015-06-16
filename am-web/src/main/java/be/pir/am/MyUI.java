@@ -57,13 +57,16 @@ public class MyUI extends UI {
 private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 	private static final long serialVersionUID = 1L;
 	private static final TimeConverter TIME_CONVERTER = new TimeConverter();
-
+	private HorizontalLayout results = new HorizontalLayout();
+	private Table tb = new Table();
+	private ComboBox cbxCategory = new ComboBox("Category");
+	private AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
+	private CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
+	
+	CompetitionDto competition = athleteService.getCompetitionWithId(1);
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 		LOGGER.info("Page Loaded");
-		AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
-		CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
-		CompetitionDto competition = athleteService.getCompetitionWithId(1);
 		Panel panel = new Panel("Inscription à la compétition RRCB - " + competition.getName() + " ("
 				+ new SimpleDateFormat("EEEE d MMMMM yyyy", getLocale()).format(competition.getStartDate()) + ")");
 
@@ -72,21 +75,23 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		layout.setMargin(true);
 		panel.setContent(layout);
 		setContent(panel);
-//		layout.addComponent(new Button("Nouvel Athlete", new Button.ClickListener() {
-//			
-//			@Override
-//			public void buttonClick(ClickEvent event) {
-//				addWindow(new NewAthleteSubWindows(athleteService) {
-//					
-//					@Override
-//					public void callback(AthleteDto athlete) {
-//						//athleteService.saveNewAthlete(athlete);
-//						
-//						
-//					}
-//				});				
-//			}
-//		}));
+		layout.addComponent(new Button("Dossard du jour", new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				addWindow(new NewAthleteSubWindows(athleteService) {
+					
+					@Override
+					public void callback(AthleteDto athlete) {
+						displayPanelForAthlete(athlete);
+						
+						//athleteService.saveNewAthlete(athlete);
+						
+						
+					}
+				});				
+			}
+		}));
 		final HorizontalLayout searchForm = new HorizontalLayout();
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
@@ -94,7 +99,7 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
 		TextField bib = new TextField("Dossard/Bib", bibProperty);
 		bib.setNullRepresentation("");
-		ComboBox cbxCategory = new ComboBox("Category");
+		
 
 		cbxCategory.setContainerDataSource(new BeanItemContainer<CategoryDto>(CategoryDto.class, categoryService
 				.getCategoriesForLbfa()));
@@ -104,8 +109,7 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		searchBtn.setClickShortcut(KeyCode.ENTER);
 		searchBtn.addStyleName(Reindeer.BUTTON_DEFAULT);
 		searchForm.addComponents(new FormLayout(bib), new FormLayout(cbxCategory), new FormLayout(searchBtn));
-		HorizontalLayout results = new HorizontalLayout();
-		Table tb = new Table();
+
 		tb.setVisible(false);
 		tb.setContainerDataSource(new BeanItemContainer<AthleteDto>(AthleteDto.class));
 		tb.setVisibleColumns("firstName", "lastName", "teamShort");
@@ -124,75 +128,11 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 				results.removeAllComponents();
 				results.addComponent(tb);
 				AthleteDto selectedAthlete = (AthleteDto) tb.getValue();
-				LOGGER.info("Selected in table : " + selectedAthlete);
-				if (selectedAthlete != null) {
-					List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
-					VerticalLayout gl = new VerticalLayout();
-					gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
-							+ " - " + DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " (" + selectedAthlete.getTeam() + ')'));
-					if (eventsList.size() > 0) {
-
-						Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
-						for (EventDto event : eventsList) {
-							HorizontalLayout eventLyt = new HorizontalLayout();
-							eventLyt.setSpacing(true);
-							final BeanFieldGroup<EventDto> binder = new BeanFieldGroup<EventDto>(EventDto.class);
-							binders.add(binder);
-							binder.setBuffered(true);
-							binder.setItemDataSource(event);
-							Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
-
-							eventLyt.addComponent(new FormLayout(checkbox));
-							if (event.isNeedRecord()) {
-								TextField recordField = (TextField) binder.buildAndBind("Record",
-										"record");
-								recordField.setNullRepresentation("0'00\"00");
-								recordField.setConverter(TIME_CONVERTER);
-								recordField.setConversionError("{1}");
-								eventLyt.addComponent(new FormLayout(recordField));
-							}
-							gl.addComponent(eventLyt);
-						}
-						Button inscriptionBtn = new Button("Inscription");
-						inscriptionBtn.addClickListener(new Button.ClickListener() {
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void buttonClick(ClickEvent event) {
-								try {
-									LOGGER.debug("Click Inscription button with events in list : ");
-									for (BeanFieldGroup<EventDto> binder : binders) {
-										LOGGER.debug("\t" + binder.getItemDataSource().getBean());
-										binder.commit();
-									}
-
-									athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
-											(CategoryDto) cbxCategory.getValue(), competition);
-									Notification.show("Inscription Ok", Type.WARNING_MESSAGE);
-									LOGGER.info("Inscription ok for " + selectedAthlete);
-									@SuppressWarnings("unchecked")
-									Collection<Property.ValueChangeListener> listeners = (Collection<ValueChangeListener>) tb
-											.getListeners(ValueChangeEvent.class);
-									for (Property.ValueChangeListener vcl : listeners) {
-										vcl.valueChange(valueChangeEvent);
-									}
-								} catch (CommitException e) {
-									LOGGER.info("error occured for user : " + e.getCause().getMessage());
-									Notification.show("Un erreur s'est produite", "Erreur : "
-											+ e.getCause().getMessage(), Type.ERROR_MESSAGE);
-								}
-
-							}
-						});
-						gl.addComponent(inscriptionBtn);
-					} else {
-						gl.addComponent(new Label(
-								"Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
-					}
-					results.addComponent(gl);
-				}
+				displayPanelForAthlete(selectedAthlete);
 			}
+
 		});
+
 
 		searchBtn.addClickListener(new Button.ClickListener() {
 
@@ -226,6 +166,71 @@ LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"
 
 	}
 
+	private void displayPanelForAthlete(AthleteDto selectedAthlete) {
+		LOGGER.info("Selected in table : " + selectedAthlete);
+		if (selectedAthlete != null) {
+			List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
+			VerticalLayout gl = new VerticalLayout();
+			gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
+					+ " - " + DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " (" + selectedAthlete.getTeam() + ')'));
+			if (eventsList.size() > 0) {
+				
+				Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
+				for (EventDto event : eventsList) {
+					HorizontalLayout eventLyt = new HorizontalLayout();
+					eventLyt.setSpacing(true);
+					final BeanFieldGroup<EventDto> binder = new BeanFieldGroup<EventDto>(EventDto.class);
+					binders.add(binder);
+					binder.setBuffered(true);
+					binder.setItemDataSource(event);
+					Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
+					
+					eventLyt.addComponent(new FormLayout(checkbox));
+					if (event.isNeedRecord()) {
+						TextField recordField = (TextField) binder.buildAndBind("Record",
+								"record");
+						recordField.setNullRepresentation("0'00\"00");
+						recordField.setConverter(TIME_CONVERTER);
+						recordField.setConversionError("{1}");
+						eventLyt.addComponent(new FormLayout(recordField));
+					}
+					gl.addComponent(eventLyt);
+				}
+				Button inscriptionBtn = new Button("Inscription");
+				inscriptionBtn.addClickListener(new Button.ClickListener() {
+					private static final long serialVersionUID = 1L;
+					
+					@Override
+					public void buttonClick(ClickEvent event) {
+						try {
+							LOGGER.debug("Click Inscription button with events in list : ");
+							for (BeanFieldGroup<EventDto> binder : binders) {
+								LOGGER.debug("\t" + binder.getItemDataSource().getBean());
+								binder.commit();
+							}
+							
+							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
+									(CategoryDto) cbxCategory.getValue(), competition);
+							Notification.show("Inscription Ok", Type.WARNING_MESSAGE);
+							LOGGER.info("Inscription ok for " + selectedAthlete);
+							displayPanelForAthlete(selectedAthlete);
+						} catch (CommitException e) {
+							LOGGER.info("error occured for user : " + e.getCause().getMessage());
+							Notification.show("Un erreur s'est produite", "Erreur : "
+									+ e.getCause().getMessage(), Type.ERROR_MESSAGE);
+						}
+						
+					}
+				});
+				gl.addComponent(inscriptionBtn);
+			} else {
+				gl.addComponent(new Label(
+						"Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
+			}
+			results.addComponent(gl);
+		}
+	}	
+	
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
 	public static class MyUIServlet extends VaadinServlet {

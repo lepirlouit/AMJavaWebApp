@@ -105,6 +105,7 @@ public abstract class NewAthleteSubWindows extends Window{
 
 			public void buttonClick(ClickEvent event) {
                 close(); // Close the sub-window
+                callback(athlete);
             }
         });
         content.addComponent(ok);

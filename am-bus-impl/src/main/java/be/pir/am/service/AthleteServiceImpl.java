@@ -118,8 +118,15 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		SimpleDateFormat stf = new SimpleDateFormat("HH:mm");
-		CompetitorEntity competitor = competitorDao.findCompetitor(athlete, competition);
-		AthleteEntity athleteEntity = athleteDao.findById(athlete.getId());
+		CompetitorEntity competitor=null;
+		AthleteEntity athleteEntity;
+		if(athlete.getId()!=null){
+			competitor = competitorDao.findCompetitor(athlete, competition);
+			athleteEntity = athleteDao.findById(athlete.getId());
+		}else{
+			athleteEntity = new AthleteEntity();
+			athleteEntity.setBirthdate(athlete.getBirthdate());
+		}
 		List<CategoryEntity> categories = getCategoryForAthlete(competition, athleteEntity);
 		List<EventEntity> events = eventDao.findEventsByCategoryAndCompetition(
 				new CompetitionEntity(competition.getId()), categories);
@@ -147,7 +154,7 @@ public class AthleteServiceImpl implements AthleteService {
 			boolean needRecord = event.getEventType().getDistance() > 5;
 			e.setNeedRecord(needRecord);
 			RecordEntity record = null;
-			if (needRecord) {
+			if (needRecord && athlete.getId()!=null) {
 				record = recordDao.getBestRecordForAthleteAndEventType(athleteEntity, event.getEventType());
 				if (record != null) {
 					e.setRecord(record.getValue());
