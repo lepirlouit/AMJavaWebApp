@@ -1,5 +1,5 @@
 #edit acess : 
-C:\Users\Benoit\AppData\Local\TimeTronics\AthleticsManager Server\data\pg_hba.conf
+C:\Users\%USERNAME%\AppData\Local\TimeTronics\AthleticsManager Server\data\pg_hba.conf
 
 #PG Admin : 
 C:\Program Files (x86)\TimeTronics\AthleticsManager PostgreSQL Database Engine\bin\pgAdmin3.exe
