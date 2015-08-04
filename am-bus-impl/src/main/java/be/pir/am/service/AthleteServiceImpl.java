@@ -87,8 +87,9 @@ public class AthleteServiceImpl implements AthleteService {
 		List<AthleteDto> returnedList = new ArrayList<>();
 		Short minimumAge = category.getMinimumAge();
 		Short maximumAge = category.getMaximumAge();
-		if (maximumAge == 0)
+		if (maximumAge == 0) {
 			maximumAge = 99;
+		}
 		Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear() - maximumAge, 1, 1).atStartOfDay()
 				.atZone(ZoneId.systemDefault()).toInstant());
 		Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 12, 31).atStartOfDay()
@@ -118,12 +119,12 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		SimpleDateFormat stf = new SimpleDateFormat("HH:mm");
-		CompetitorEntity competitor=null;
+		CompetitorEntity competitor = null;
 		AthleteEntity athleteEntity;
-		if(athlete.getId()!=null){
+		if (athlete.getId() != null) {
 			competitor = competitorDao.findCompetitor(athlete, competition);
 			athleteEntity = athleteDao.findById(athlete.getId());
-		}else{
+		} else {
 			athleteEntity = new AthleteEntity();
 			athleteEntity.setBirthdate(athlete.getBirthdate());
 		}
@@ -147,14 +148,14 @@ public class AthleteServiceImpl implements AthleteService {
 				return o1.getRounds().get(0).getTimeScheduled().compareTo(o2.getRounds().get(0).getTimeScheduled());
 			}
 		});
-		
+
 		for (EventEntity event : events) {
 			EventDto e = new EventDto();
 			e.setId(event.getId());
 			boolean needRecord = event.getEventType().getDistance() > 5;
 			e.setNeedRecord(needRecord);
 			RecordEntity record = null;
-			if (needRecord && athlete.getId()!=null) {
+			if (needRecord && (athlete.getId() != null)) {
 				record = recordDao.getBestRecordForAthleteAndEventType(athleteEntity, event.getEventType());
 				if (record != null) {
 					e.setRecord(record.getValue());
@@ -229,6 +230,7 @@ public class AthleteServiceImpl implements AthleteService {
 								newrecord.setAthlete(competitor.getAthlete());
 								newrecord.setEventtype(eventEntity.getEventType());
 								newrecord.setValue(event.getRecord());
+								newrecord.setSeasonflag(Boolean.TRUE);
 								recordDao.save(newrecord);
 							}
 						}
@@ -241,7 +243,7 @@ public class AthleteServiceImpl implements AthleteService {
 				}
 			}
 		}
-		if (competitor.getParticipations().size() == 0 && competitor.getId() != null) {
+		if ((competitor.getParticipations().size() == 0) && (competitor.getId() != null)) {
 			competitorDao.delete(competitor);
 		} else {
 			//TODO send mail to competitor
@@ -264,11 +266,12 @@ public class AthleteServiceImpl implements AthleteService {
 		List<TeamDto> returnedList = new ArrayList<>();
 		List<TeamEntity> allTeams = teamDao.findAll();
 		for (TeamEntity team : allTeams) {
-			returnedList.add(new TeamDto(team.getId(),team.getAbbreviation(), team.getName()));
+			returnedList.add(new TeamDto(team.getId(), team.getAbbreviation(), team.getName()));
 		}
-		
+
 		return returnedList;
 	}
+
 	@Override
 	public List<EventDto> getAllParticipations(CompetitionDto competition) {
 		CompetitionEntity competitionEntity = new CompetitionEntity(competition.getId());
@@ -292,7 +295,6 @@ public class AthleteServiceImpl implements AthleteService {
 				participantsInMap.add(athlete);
 			}
 		}
-
 
 		ArrayList<EventDto> eventsList = new ArrayList<EventDto>(events.keySet());
 		//order each participantsList (in events) (by name)
