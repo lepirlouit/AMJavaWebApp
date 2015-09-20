@@ -16,6 +16,14 @@ public class CountryEntity extends BaseEntity {
 	@Column(name = "id_for_federation", length = 64)
 	private String idForFederation;
 
+	public CountryEntity() {
+		super();
+	}
+
+	public CountryEntity(Integer id) {
+		super(id);
+	}
+
 	public String getIso() {
 		return iso;
 	}
