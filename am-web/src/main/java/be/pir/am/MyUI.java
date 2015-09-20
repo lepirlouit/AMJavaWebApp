@@ -220,6 +220,8 @@ public class MyUI extends UI {
 									(CategoryDto) cbxCategory.getValue(), competition);
 							Notification.show("Inscription Ok", Type.WARNING_MESSAGE);
 							LOGGER.info("Inscription ok for " + selectedAthlete);
+							results.removeAllComponents();
+							results.addComponent(tb);
 							displayPanelForAthlete(selectedAthlete);
 						} catch (CommitException e) {
 							LOGGER.info("error occured for user : " + e.getCause().getMessage());
