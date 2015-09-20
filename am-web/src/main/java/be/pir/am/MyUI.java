@@ -92,6 +92,8 @@ public class MyUI extends UI {
 
 					@Override
 					public void callback(AthleteDto athlete) {
+
+						results.removeAllComponents();
 						displayPanelForAthlete(athlete);
 
 						//athleteService.saveNewAthlete(athlete);
@@ -179,9 +181,11 @@ public class MyUI extends UI {
 			List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 			VerticalLayout gl = new VerticalLayout();
 			gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName() + " - "
-					+ DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " ("
+					+ DateFormat.getDateInstance(DateFormat.MEDIUM).format(selectedAthlete.getBirthdate()) + " ("
 					+ selectedAthlete.getTeam() + ')'));
-			if (eventsList.size() > 0) {
+			if (eventsList.isEmpty()) {
+				gl.addComponent(new Label("Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
+			} else {
 
 				Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
 				for (EventDto event : eventsList) {
@@ -232,8 +236,6 @@ public class MyUI extends UI {
 					}
 				});
 				gl.addComponent(inscriptionBtn);
-			} else {
-				gl.addComponent(new Label("Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
 			}
 			results.addComponent(gl);
 		}
