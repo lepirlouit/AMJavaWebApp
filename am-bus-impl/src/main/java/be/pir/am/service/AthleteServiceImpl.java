@@ -40,6 +40,7 @@ import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.CategoryEntity;
 import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
+import be.pir.am.entities.CountryEntity;
 import be.pir.am.entities.EventEntity;
 import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
@@ -85,8 +86,8 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public List<AthleteDto> findAthletesByBibAndCategory(int bib, CategoryDto category) {
 		List<AthleteDto> returnedList = new ArrayList<>();
-		Short minimumAge = category.getMinimumAge();
-		Short maximumAge = category.getMaximumAge();
+		Short minimumAge = category == null ? 0 : category.getMinimumAge();
+		Short maximumAge = category == null ? 100 : category.getMaximumAge();
 		if (maximumAge == 0) {
 			maximumAge = 99;
 		}
@@ -120,15 +121,14 @@ public class AthleteServiceImpl implements AthleteService {
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		SimpleDateFormat stf = new SimpleDateFormat("HH:mm");
 		CompetitorEntity competitor = null;
-		AthleteEntity athleteEntity;
 		if (athlete.getId() != null) {
 			competitor = competitorDao.findCompetitor(athlete, competition);
-			athleteEntity = athleteDao.findById(athlete.getId());
-		} else {
-			athleteEntity = new AthleteEntity();
-			athleteEntity.setBirthdate(athlete.getBirthdate());
 		}
-		List<CategoryEntity> categories = getCategoryForAthlete(competition, athleteEntity);
+		List<CategoryEntity> categories = getCategoryForAthlete(competition, athlete.getGender(),
+				athlete.getBirthdate());
+		if (categories.isEmpty()) {
+			return Collections.emptyList();
+		}
 		List<EventEntity> events = eventDao.findEventsByCategoryAndCompetition(
 				new CompetitionEntity(competition.getId()), categories);
 		Set<RoundEntity> rounds = new HashSet<>();
@@ -156,7 +156,8 @@ public class AthleteServiceImpl implements AthleteService {
 			e.setNeedRecord(needRecord);
 			RecordEntity record = null;
 			if (needRecord && (athlete.getId() != null)) {
-				record = recordDao.getBestRecordForAthleteAndEventType(athleteEntity, event.getEventType());
+				record = recordDao.getBestRecordForAthleteAndEventType(new AthleteEntity(athlete.getId()),
+						event.getEventType());
 				if (record != null) {
 					e.setRecord(record.getValue());
 					e.setRecordId(record.getId());
@@ -176,14 +177,14 @@ public class AthleteServiceImpl implements AthleteService {
 		return returnedList;
 	}
 
-	private List<CategoryEntity> getCategoryForAthlete(CompetitionDto competition, AthleteEntity athleteEntity) {
+	private List<CategoryEntity> getCategoryForAthlete(CompetitionDto competition, Character gender, Date birthDate) {
 		LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
 		//TODO : in place of currentDate, take the end of year of the competition date
-		LocalDate birthday = athleteEntity.getBirthdate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate birthday = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
 		Period p = Period.between(birthday, endOfYear);
 
-		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(athleteEntity.getGender(),
+		List<CategoryEntity> categories = categoryDao.findCategoriesByGenderFederationAndAge(gender,
 				new FederationEntity(competition.getFederationId()), (short) p.getYears());
 		return categories;
 	}
@@ -191,24 +192,37 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public void subscribeAthleteToEvents(AthleteDto athlete, List<EventDto> events, CategoryDto category,
 			CompetitionDto competition) {
-		CompetitorEntity competitor = competitorDao.findCompetitorFetchParticipationsAndRounds(athlete, competition);
+		CompetitorEntity competitor = athlete.getId() == null ? null : competitorDao
+				.findCompetitorFetchParticipationsAndRounds(athlete, competition);
 		if (competitor == null) {
 			competitor = new CompetitorEntity();
-			competitor.setAthlete(athleteDao.findById(athlete.getId()));
+			if (athlete.getId() != null) {
+				competitor.setAthlete(athleteDao.findById(athlete.getId()));
+			} else {
+				AthleteEntity athleteEntity = new AthleteEntity();
+				athleteEntity.setFirstname(athlete.getFirstName());
+				athleteEntity.setLastname(athlete.getLastName());
+				athleteEntity.setGender(athlete.getGender());
+				athleteEntity.setBirthdate(athlete.getBirthdate());
+				athleteEntity.setNationality(new CountryEntity(2032));
+				athleteDao.save(athleteEntity);
+				athlete.setId(athleteEntity.getId());
+				competitor.setAthlete(athleteEntity);
+			}
 			competitor.setParticipations(new ArrayList<>());
 			competitor.setCompetition(new CompetitionEntity(competition.getId()));
 			competitor.setBib(athlete.getBib());
 			competitor.setLicense(new LicenseEntity(athlete.getLicenseId()));
 			competitor.setDisplayname(athlete.getLastName() + ", " + athlete.getFirstName());
 		}
-		AthleteEntity athleteEntity = competitor.getAthlete();
 		for (EventDto event : events) {
 			EventEntity eventEntity = eventDao.findById(event.getId());
 			for (RoundEntity round : eventEntity.getRounds()) {
 				ParticipationEntity participation = findParticipation(competitor, round);
 				if (participation == null) {
 					participation = new ParticipationEntity();
-					participation.setCategory(getCategoryForAthlete(competition, athleteEntity).get(0));
+					participation.setCategory(getCategoryForAthlete(competition, athlete.getGender(),
+							athlete.getBirthdate()).get(0));
 					participation.setRound(round);
 					participation.setCompetitors(Arrays.asList(competitor));
 				}
