@@ -2,7 +2,6 @@ package be.pir.am;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +23,6 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.BeanItemContainer;
@@ -54,7 +52,7 @@ import com.vaadin.ui.themes.Reindeer;
 @Theme("runo")
 @Widgetset("be.pir.am.MyAppWidgetset")
 public class MyUI extends UI {
-private static final Logger LOGGER = Logger.getLogger(MyUI.class);
+	private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 	private static final long serialVersionUID = 1L;
 	private static final TimeConverter TIME_CONVERTER = new TimeConverter();
 	private HorizontalLayout results = new HorizontalLayout();
@@ -62,8 +60,9 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 	private ComboBox cbxCategory = new ComboBox("Category");
 	private AthleteService athleteService = ServiceLocator.getInstance().getAthleteService();
 	private CategoryService categoryService = ServiceLocator.getInstance().getCategoryService();
-	
+
 	CompetitionDto competition = athleteService.getCompetitionWithId(1);
+
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
 		LOGGER.info("Page Loaded");
@@ -76,20 +75,29 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		panel.setContent(layout);
 		setContent(panel);
 		layout.addComponent(new Button("Dossard du jour", new Button.ClickListener() {
-			
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void buttonClick(ClickEvent event) {
 				addWindow(new NewAthleteSubWindows(athleteService) {
-					
+
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 					@Override
 					public void callback(AthleteDto athlete) {
 						displayPanelForAthlete(athlete);
-						
+
 						//athleteService.saveNewAthlete(athlete);
-						
-						
+
 					}
-				});				
+				});
 			}
 		}));
 		final HorizontalLayout searchForm = new HorizontalLayout();
@@ -99,7 +107,6 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
 		TextField bib = new TextField("Dossard/Bib", bibProperty);
 		bib.setNullRepresentation("");
-		
 
 		cbxCategory.setContainerDataSource(new BeanItemContainer<CategoryDto>(CategoryDto.class, categoryService
 				.getCategoriesForLbfa()));
@@ -133,21 +140,21 @@ private static final Logger LOGGER = Logger.getLogger(MyUI.class);
 
 		});
 
-
 		searchBtn.addClickListener(new Button.ClickListener() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(ClickEvent clevent) {
-LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"] category ["+cbxCategory.getValue()+"]");
+				LOGGER.info("search button clicked with values : bib [" + bibProperty.getValue() + "] category ["
+						+ cbxCategory.getValue() + "]");
 				List<AthleteDto> athls = athleteService.findAthletesByBibAndCategory(bibProperty.getValue(),
 						(CategoryDto) cbxCategory.getValue());
 				LOGGER.debug("Result list Size : " + athls.size());
 				boolean foundAth = athls.size() > 0;
 				if (!foundAth) {
 					Notification.show("Je ne t'ai pas trouvé dans la base de donnée", Type.ERROR_MESSAGE); // TODO : atheletes non
-													// trouve, create new.
+					// trouve, create new.
 				} else if (athls.size() > 1) {
 					Notification
 							.show("Plus d'un athlète correspond au critère. Veuillez selectionner dans la colonne de gauche.",
@@ -171,10 +178,11 @@ LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"
 		if (selectedAthlete != null) {
 			List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 			VerticalLayout gl = new VerticalLayout();
-			gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName()
-					+ " - " + DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " (" + selectedAthlete.getTeam() + ')'));
+			gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName() + " - "
+					+ DateFormat.getDateInstance(SimpleDateFormat.SHORT).format(selectedAthlete.getBirthdate()) + " ("
+					+ selectedAthlete.getTeam() + ')'));
 			if (eventsList.size() > 0) {
-				
+
 				Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
 				for (EventDto event : eventsList) {
 					HorizontalLayout eventLyt = new HorizontalLayout();
@@ -184,11 +192,10 @@ LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"
 					binder.setBuffered(true);
 					binder.setItemDataSource(event);
 					Field<?> checkbox = binder.buildAndBind(event.getName(), "checked");
-					
+
 					eventLyt.addComponent(new FormLayout(checkbox));
 					if (event.isNeedRecord()) {
-						TextField recordField = (TextField) binder.buildAndBind("Record",
-								"record");
+						TextField recordField = (TextField) binder.buildAndBind("Record", "record");
 						recordField.setNullRepresentation("0'00\"00");
 						recordField.setConverter(TIME_CONVERTER);
 						recordField.setConversionError("{1}");
@@ -199,7 +206,7 @@ LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"
 				Button inscriptionBtn = new Button("Inscription");
 				inscriptionBtn.addClickListener(new Button.ClickListener() {
 					private static final long serialVersionUID = 1L;
-					
+
 					@Override
 					public void buttonClick(ClickEvent event) {
 						try {
@@ -208,7 +215,7 @@ LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"
 								LOGGER.debug("\t" + binder.getItemDataSource().getBean());
 								binder.commit();
 							}
-							
+
 							athleteService.subscribeAthleteToEvents(selectedAthlete, eventsList,
 									(CategoryDto) cbxCategory.getValue(), competition);
 							Notification.show("Inscription Ok", Type.WARNING_MESSAGE);
@@ -216,21 +223,20 @@ LOGGER.info("search button clicked with values : bib ["+bibProperty.getValue()+"
 							displayPanelForAthlete(selectedAthlete);
 						} catch (CommitException e) {
 							LOGGER.info("error occured for user : " + e.getCause().getMessage());
-							Notification.show("Un erreur s'est produite", "Erreur : "
-									+ e.getCause().getMessage(), Type.ERROR_MESSAGE);
+							Notification.show("Un erreur s'est produite", "Erreur : " + e.getCause().getMessage(),
+									Type.ERROR_MESSAGE);
 						}
-						
+
 					}
 				});
 				gl.addComponent(inscriptionBtn);
 			} else {
-				gl.addComponent(new Label(
-						"Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
+				gl.addComponent(new Label("Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
 			}
 			results.addComponent(gl);
 		}
-	}	
-	
+	}
+
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
 	public static class MyUIServlet extends VaadinServlet {
