@@ -1,9 +1,3 @@
-/*
- * Copyright 2003-2009 LCM-ANMC, Inc. All rights reserved.
- * This source code is the property of LCM-ANMC, Direction
- * Informatique and cannot be copied or distributed without
- * the formal permission of LCM-ANMC.
- */
 package be.pir.am.util;
 
 import java.util.Collections;
@@ -33,8 +27,7 @@ public class ServiceLocator {
 	protected ServiceLocator() {
 		try {
 			this.initialContext = new InitialContext();
-			this.cache = Collections
-					.synchronizedMap(new HashMap<String, Object>());
+			this.cache = Collections.synchronizedMap(new HashMap<String, Object>());
 		} catch (NamingException ne) {
 			ne.printStackTrace();
 		}
@@ -56,8 +49,7 @@ public class ServiceLocator {
 			return this.cache.get(ejbName);
 		}
 		try {
-			Object ejbRef = initialContext
-					.lookup("java:app/am-bus-impl-0.0.1-SNAPSHOT/" + ejbName);
+			Object ejbRef = initialContext.lookup("java:app/am-bus-impl-0.0.1-SNAPSHOT/" + ejbName);
 			this.cache.put(ejbName, ejbRef);
 			return ejbRef;
 		} catch (NamingException ne) {
