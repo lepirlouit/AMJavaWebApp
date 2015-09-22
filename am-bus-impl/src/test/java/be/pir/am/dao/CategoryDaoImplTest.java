@@ -9,6 +9,7 @@ import be.pir.am.entities.CompetitionEntity;
 import be.pir.am.entities.CompetitorEntity;
 import be.pir.am.entities.CountryEntity;
 import be.pir.am.entities.EventEntity;
+import be.pir.am.entities.EventTypeEntity;
 import be.pir.am.entities.FederationEntity;
 import be.pir.am.entities.LicenseEntity;
 import be.pir.am.entities.ParticipationEntity;
@@ -20,7 +21,7 @@ import com.bm.testsuite.BaseSessionBeanFixture;
 public class CategoryDaoImplTest extends BaseSessionBeanFixture<CategoryDaoImpl> {
 	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
 			TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
-			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class };
+			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class, EventTypeEntity.class };
 
 	/**
 	 * Constructor.
