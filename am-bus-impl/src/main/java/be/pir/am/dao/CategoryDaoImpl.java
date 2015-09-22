@@ -1,5 +1,6 @@
 package be.pir.am.dao;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,12 +23,19 @@ public class CategoryDaoImpl extends AbstractEntityDao<CategoryEntity> implement
 	@Override
 	public List<CategoryEntity> findCategoriesByGenderFederationAndAge(Character gender, FederationEntity federation,
 			short age) {
+		List<Character> genders;
+		if (Character.valueOf('W').equals(gender)||Character.valueOf('F').equals(gender)){
+			genders=Arrays.asList('W','F');
+		}else{
+			genders=Arrays.asList(gender);
+		}
+		
 		EntityManager em = getEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		CriteriaQuery<CategoryEntity> cq = cb.createQuery(CategoryEntity.class);
 		Root<CategoryEntity> category = cq.from(CategoryEntity.class);
-		cq.where(cb.equal(category.get("gender"), gender), cb.equal(category.get("federation"), federation),
+		cq.where(category.get("gender").in(genders), cb.equal(category.get("federation"), federation),
 				cb.lessThanOrEqualTo(category.get("minimumAge"), age),
 				cb.greaterThanOrEqualTo(category.get("maximumAge"), age), cb.notEqual(category.get("maximumAge"), 0));
 		return em.createQuery(cq).getResultList();
