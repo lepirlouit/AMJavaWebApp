@@ -14,7 +14,6 @@ import be.pir.am.api.service.CategoryService;
 /**
  * Is used to get the facades to provide the services.
  *
- * @author 7518294 - Benoit de Biolley
  * @version %PR%
  */
 public class ServiceLocator {

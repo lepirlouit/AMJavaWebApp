@@ -9,7 +9,6 @@ import be.pir.am.entities.BaseEntity;
  * EntityRepository
  * @param <T> The entity type
  *
- * @author 7518305 - Suederick Ralph
  * @version %PR%
  */
 public interface EntityDao<T extends BaseEntity> {
