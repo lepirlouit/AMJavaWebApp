@@ -296,6 +296,8 @@ public class AthleteServiceImpl implements AthleteService {
 			List<AthleteDto> participantsInMap = new ArrayList<AthleteDto>();
 			event.setParticipants(participantsInMap);
 			events.put(event, participantsInMap);
+			ArrayList<CategoryDto> categories = new ArrayList<CategoryDto>();
+			event.setCategory(CategoryServiceImpl.createCategoryDto(getMasterCategoryForEvent(eventEntity)));
 		}
 		List<CompetitorEntity> allCompetitors = competitorDao
 				.getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(competitionEntity);
@@ -331,6 +333,16 @@ public class AthleteServiceImpl implements AthleteService {
 			}
 		});
 		return eventsList;
+	}
+
+	private CategoryEntity getMasterCategoryForEvent(EventEntity eventEntity) {
+		//if contains TC then TC otherwise the first
+		for (CategoryEntity categoryEntity : eventEntity.getCategories()) {
+			if (categoryEntity.getAbbreviation().startsWith("TC")) {
+				return categoryEntity;
+			}
+		}
+		return eventEntity.getCategories().iterator().next();
 	}
 
 	private EventDto createEventDto(EventEntity event) {

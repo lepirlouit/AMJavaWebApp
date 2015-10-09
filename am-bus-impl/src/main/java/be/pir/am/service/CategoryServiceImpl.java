@@ -29,16 +29,21 @@ public class CategoryServiceImpl implements CategoryService {
 		FederationEntity lbfa = federationDao.getByCode("BEL_LBFA");
 		List<CategoryEntity> findAllCategoriesForDisplay = categoryDao.findAllCategoriesForDisplay(lbfa);
 		for (CategoryEntity categoryEntity : findAllCategoriesForDisplay) {
-			CategoryDto category = new CategoryDto();
-			category.setAbbreviation(categoryEntity.getAbbreviation());
-			category.setName(categoryEntity.getName());
-			category.setId(categoryEntity.getId());
-			category.setGender(categoryEntity.getGender());
-			category.setMinimumAge(categoryEntity.getMinimumAge());
-			category.setMaximumAge(categoryEntity.getMaximumAge());
+			CategoryDto category = createCategoryDto(categoryEntity);
 			returnedList.add(category);
 		}
 		return returnedList;
+	}
+
+	public static CategoryDto createCategoryDto(CategoryEntity categoryEntity) {
+		CategoryDto category = new CategoryDto();
+		category.setAbbreviation(categoryEntity.getAbbreviation());
+		category.setName(categoryEntity.getName());
+		category.setId(categoryEntity.getId());
+		category.setGender(categoryEntity.getGender());
+		category.setMinimumAge(categoryEntity.getMinimumAge());
+		category.setMaximumAge(categoryEntity.getMaximumAge());
+		return category;
 	}
 
 }

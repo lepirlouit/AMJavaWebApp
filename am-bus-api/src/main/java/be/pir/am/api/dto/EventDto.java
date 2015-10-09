@@ -11,6 +11,7 @@ public class EventDto extends BaseDto {
 	private BigDecimal record;
 	private Integer recordId;
 	private List<AthleteDto> participants;
+	private CategoryDto category;
 	private int number;
 
 	public String getName() {
@@ -75,6 +76,14 @@ public class EventDto extends BaseDto {
 
 	public void setRecordId(Integer recordId) {
 		this.recordId = recordId;
+	}
+
+	public CategoryDto getCategory() {
+		return category;
+	}
+
+	public void setCategory(CategoryDto category) {
+		this.category = category;
 	}
 
 	public List<AthleteDto> getParticipants() {

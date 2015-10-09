@@ -38,6 +38,8 @@ public class PrintPage extends WebPage {
 				item.add(new Label("hour"));
 				item.add(new Label("name"));
 				item.add(new Label("abbreviation"));
+				item.add(new Label("category.name"));
+
 				final int subscribed = item.getModelObject().getParticipants().size();
 				item.add(new PropertyListView<AthleteDto>("athlete", item.getModelObject().getParticipants()) {
 
