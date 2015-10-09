@@ -227,7 +227,8 @@ public class AthleteServiceImpl implements AthleteService {
 			competitor.setParticipations(new ArrayList<>());
 			competitor.setCompetition(new CompetitionEntity(competition.getId()));
 			competitor.setBib(athlete.getBib());
-			competitor.setLicense(new LicenseEntity(athlete.getLicenseId()));
+			if (athlete.getLicenseId() != 0)
+				competitor.setLicense(new LicenseEntity(athlete.getLicenseId()));
 			competitor.setDisplayname(athlete.getLastName() + ", " + athlete.getFirstName());
 		}
 		for (EventDto event : events) {
