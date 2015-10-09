@@ -70,8 +70,8 @@ public class CompetitorDaoImpl extends AbstractEntityDao<CompetitorEntity> imple
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<CompetitorEntity> cq = cb.createQuery(CompetitorEntity.class);
 		Root<CompetitorEntity> competitor = cq.from(CompetitorEntity.class);
-		Fetch<CompetitorEntity, LicenseEntity> license = competitor.fetch(CompetitorEntity_.license);
-		license.fetch(LicenseEntity_.team);
+		Fetch<CompetitorEntity, LicenseEntity> license = competitor.fetch(CompetitorEntity_.license, JoinType.LEFT);
+		license.fetch(LicenseEntity_.team, JoinType.LEFT);
 		Fetch<CompetitorEntity, ParticipationEntity> participation = competitor.fetch(CompetitorEntity_.participations);
 		participation.fetch(ParticipationEntity_.category);
 		Fetch<ParticipationEntity, RoundEntity> round = participation.fetch(ParticipationEntity_.round);

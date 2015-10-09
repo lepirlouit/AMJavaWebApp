@@ -117,6 +117,21 @@ public class AthleteServiceImpl implements AthleteService {
 		return athDto;
 	}
 
+	private AthleteDto createAthleteDto(CompetitorEntity competitor) {
+		AthleteEntity athlete = competitor.getAthlete();
+		AthleteDto athDto = new AthleteDto(athlete.getFirstname(), athlete.getLastname());
+		athDto.setBirthdate(athlete.getBirthdate());
+		athDto.setLicenseId(competitor.getId());
+		athDto.setId(competitor.getAthlete().getId());
+		athDto.setBib(competitor.getBib());
+		if (competitor.getLicense() != null) {
+			athDto.setTeam(competitor.getLicense().getTeam().getName());
+			athDto.setTeamShort(competitor.getLicense().getTeam().getAbbreviation());
+		}
+		athDto.setGender(athlete.getGender());
+		return athDto;
+	}
+
 	@Override
 	public List<EventDto> findEventsForAthlete(AthleteDto athlete, CompetitionDto competition) {
 		SimpleDateFormat stf = new SimpleDateFormat("HH:mm");
@@ -302,7 +317,7 @@ public class AthleteServiceImpl implements AthleteService {
 		List<CompetitorEntity> allCompetitors = competitorDao
 				.getAllCompetitorsFetchParticipationsRoundsCategoriesEvents(competitionEntity);
 		for (CompetitorEntity competitor : allCompetitors) {
-			AthleteDto athlete = createAthleteDto(competitor.getLicense());
+			AthleteDto athlete = createAthleteDto(competitor);
 			for (ParticipationEntity participation : competitor.getParticipations()) {
 				athlete.setCategory(participation.getCategory().getName());
 				EventDto event = createEventDto(participation.getRound().getEvent());
