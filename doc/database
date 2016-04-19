@@ -44,3 +44,15 @@ FROM
 	on records.athlete=athletes.id
    AND records.eventtype = events.type;
 
+
+-- remove dupplicates
+DELETE FROM licenses
+	WHERE id IN (SELECT id
+              FROM (SELECT id, ROW_NUMBER() OVER (partition BY licensenumber, bib, id_for_federation ORDER BY id asc) AS rnum
+                     FROM licenses) t
+              WHERE t.rnum );
+DELETE FROM athletes
+	WHERE id IN (SELECT id
+		FROM (SELECT id, ROW_NUMBER() OVER (partition BY firstname, lastname, birthdate ORDER BY id asc) AS rnum
+                     FROM athletes) t
+              WHERE t.rnum );
