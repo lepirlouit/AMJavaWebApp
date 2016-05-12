@@ -47,12 +47,87 @@ FROM
 
 -- remove dupplicates
 DELETE FROM licenses
-	WHERE id IN (SELECT id
+    WHERE id IN (SELECT id
               FROM (SELECT id, ROW_NUMBER() OVER (partition BY licensenumber, bib, id_for_federation ORDER BY id asc) AS rnum
                      FROM licenses) t
-              WHERE t.rnum );
+              WHERE t.rnum>1 );
 DELETE FROM athletes
-	WHERE id IN (SELECT id
-		FROM (SELECT id, ROW_NUMBER() OVER (partition BY firstname, lastname, birthdate ORDER BY id asc) AS rnum
+    WHERE id IN (SELECT id
+        FROM (SELECT id, ROW_NUMBER() OVER (partition BY firstname, lastname, birthdate ORDER BY id asc) AS rnum
                      FROM athletes) t
-              WHERE t.rnum );
+              WHERE t.rnum>1 );
+			  
+-- change column type
+drop view _rounds;
+drop view _teams;
+drop view _participants_with_teampoints;
+drop view _participants;
+alter table rounds alter column timescheduled TYPE time without time zone;
+CREATE OR REPLACE VIEW _participants AS 
+ SELECT participants.id AS participants_id, participations.id AS participations_id, competitors.id AS competitors_id, rounds.id AS rounds_id, events.id AS events_id, participations.teamname AS participations_teamname, rounds.name AS rounds_name, rounds.timescheduled AS rounds_timescheduled, rounds.seqno AS rounds_seqno, events.name AS events_name, competitors.displayname AS competitors_displayname, competitors.bib AS competitors_bib, participations.category AS participations_category, competitionteams.id AS competitionteams_id, competitionteams.name AS competitionteams_name, participations.initialorder AS participations_initialorder, participations.laneorder AS participations_laneorder, participations.heat AS participations_heat, participants.seqno AS participants_seqno, competitors.license AS competitors_license
+   FROM participants, participations, competitors
+   LEFT JOIN (competitorsinteams
+   JOIN competitionteams ON competitorsinteams.team = competitionteams.id) ON competitorsinteams.competitor = competitors.id, rounds, events
+  WHERE participants.participation = participations.id AND participants.competitor = competitors.id AND participations.round = rounds.id AND rounds.event = events.id;
+
+ALTER TABLE _participants
+  OWNER TO test;
+CREATE OR REPLACE VIEW _participants_with_teampoints AS 
+ SELECT _participants.participations_id, _participants.events_id, _participants.rounds_id, _participants.competitors_id, _participants.events_name, _participants.rounds_name, _participants.competitionteams_id, _participants.competitionteams_name, _participants.competitors_displayname, _participants.competitors_bib, _participants.participations_teamname, participations.points AS participations_points, participations.points_manual AS participations_points_manual, 
+        CASE
+            WHEN participations.points_manual > 0 THEN participations.points_manual::numeric
+            ELSE participations.points::numeric
+        END AS points_for_calculation, participations.teampoints AS participations_teampoints, participations.teampoints_manual AS participations_teampoints_manual, 
+        CASE
+            WHEN participations.teampoints_manual > 0::numeric THEN participations.teampoints_manual
+            ELSE participations.teampoints
+        END AS teampoints_for_calculation, _participants.participants_seqno, _participants.participants_id
+   FROM participations, _participants, participants
+  WHERE participations.id = _participants.participations_id AND participations.id = participants.participation AND participants.seqno = 1;
+
+ALTER TABLE _participants_with_teampoints
+  OWNER TO test;
+CREATE OR REPLACE VIEW _teams AS 
+ SELECT competitionteams.id AS competitionteams_id, competitionteams.competition AS competitionteams_competition, competitionteams.name AS competitionteams_name, competitionteams.abbreviation AS competitionteams_abbreviation, ( SELECT count(*) AS count
+           FROM competitorsinteams
+          WHERE competitorsinteams.team = competitionteams.id) AS competitorsinteams_count, ( SELECT sum(_participants_with_teampoints.participations_teampoints) AS sum
+           FROM _participants_with_teampoints _participants_with_teampoints
+      JOIN rounds r ON _participants_with_teampoints.rounds_id = r.id
+     WHERE _participants_with_teampoints.competitionteams_id = competitionteams.id AND _participants_with_teampoints.participants_seqno = 1 AND r.status = 5
+     GROUP BY _participants_with_teampoints.competitionteams_id) AS participations_teampoints, ( SELECT sum(_participants_with_teampoints.participations_teampoints_manual) AS sum
+           FROM _participants_with_teampoints _participants_with_teampoints
+      JOIN rounds r ON _participants_with_teampoints.rounds_id = r.id
+     WHERE _participants_with_teampoints.competitionteams_id = competitionteams.id AND _participants_with_teampoints.participants_seqno = 1 AND r.status = 5
+     GROUP BY _participants_with_teampoints.competitionteams_id) AS participations_teampoints_manual, ( SELECT sum(_participants_with_teampoints.teampoints_for_calculation) AS sum
+           FROM _participants_with_teampoints _participants_with_teampoints
+      JOIN rounds r ON _participants_with_teampoints.rounds_id = r.id
+     WHERE _participants_with_teampoints.competitionteams_id = competitionteams.id AND _participants_with_teampoints.participants_seqno = 1 AND r.status = 5
+     GROUP BY _participants_with_teampoints.competitionteams_id) AS teampoints_for_calculation, competitionteams.teamgroup AS competitionteams_teamgroup, competitionteamgroups.name AS competitionteamgroups_name, 
+        CASE
+            WHEN competitionteams.currentorder_manual > 0 THEN competitionteams.currentorder_manual
+            ELSE competitionteams.currentorder
+        END AS competitionteams_currentorder
+   FROM competitionteams
+   LEFT JOIN competitionteamgroups ON competitionteams.teamgroup = competitionteamgroups.id;
+
+ALTER TABLE _teams
+  OWNER TO test;
+CREATE OR REPLACE VIEW _rounds AS 
+ SELECT events.id AS events_id, rounds.id AS rounds_id, competitions.id AS competitions_id, rounds.seqno AS rounds_seqno, events.name AS events_name, 
+        CASE
+            WHEN rounds.name::text = '*'::text THEN ''::text::character varying
+            ELSE rounds.name
+        END AS rounds_name, events.seqno AS events_seqno, rounds.timescheduled AS rounds_timescheduled, rounds.datescheduled AS rounds_datescheduled, rounds.timeofficial AS rounds_timeofficial, sessions.id AS sessions_id, sessions.name AS sessions_name, sessions.date AS sessions_date, rounds.status AS rounds_status, events.status AS events_status, ( SELECT count(*) AS count
+           FROM participations
+          WHERE participations.round = rounds.id) AS participations_count, ( SELECT count(*) AS count
+           FROM heats
+          WHERE heats.round = rounds.id) AS heats_count
+   FROM rounds
+   RIGHT JOIN (events
+   JOIN competitions ON events.competition = competitions.id) ON rounds.event = events.id
+   LEFT JOIN sessions ON rounds.session = sessions.id;
+
+ALTER TABLE _rounds
+  OWNER TO test;
+
+
