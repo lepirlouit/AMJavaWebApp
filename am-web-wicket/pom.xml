@@ -27,10 +27,10 @@
 	<packaging>war</packaging>
 	<name>am-web-wicket</name>
 	<properties>
-		<wicket.version>7.0.0-M4</wicket.version>
+		<wicket.version>7.3.0</wicket.version>
 		<jetty9.version>9.2.3.v20140905</jetty9.version>
 		<log4j.version>2.0.2</log4j.version>
-		<junit.version>4.11</junit.version>
+		<junit.version>4.12</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
 		<wtp.version>none</wtp.version>
@@ -163,6 +163,8 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jetty9.version}</version>
 				<configuration>
+					<stopPort>9999</stopPort>
+					<stopKey>foo</stopKey>
 					<systemProperties>
 						<systemProperty>
 							<name>maven.project.build.directory.test-classes</name>
