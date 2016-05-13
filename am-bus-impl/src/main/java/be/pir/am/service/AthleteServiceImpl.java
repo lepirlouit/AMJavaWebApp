@@ -86,8 +86,18 @@ public class AthleteServiceImpl implements AthleteService {
 	@Override
 	public List<AthleteDto> findAthletesByBibAndCategory(int bib, CategoryDto category) {
 		List<AthleteDto> returnedList = new ArrayList<>();
-		Short minimumAge = category == null ? 0 : category.getMinimumAge();
-		Short maximumAge = category == null ? 100 : category.getMaximumAge();
+		Short minimumAge;
+		Short maximumAge;
+		Character gender;
+		if(category==null){
+			minimumAge = 0;
+			maximumAge = 100;
+			gender= null;
+		}else{
+			minimumAge = category.getMinimumAge();
+			maximumAge = category.getMaximumAge();
+			gender = category.getGender();
+		}
 		if (maximumAge == 0) {
 			maximumAge = 99;
 		}
@@ -97,7 +107,7 @@ public class AthleteServiceImpl implements AthleteService {
 				.atZone(ZoneId.systemDefault()).toInstant());
 
 		List<LicenseEntity> results = athleteDao.findAthleteByBibGenderAndBirthdayMinMax(String.valueOf(bib),
-				category.getGender(), dateMin, dateMax);
+				gender, dateMin, dateMax);
 		for (LicenseEntity athleteEntity : results) {
 			returnedList.add(createAthleteDto(athleteEntity));
 		}

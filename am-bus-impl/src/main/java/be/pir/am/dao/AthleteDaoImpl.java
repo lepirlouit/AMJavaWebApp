@@ -27,11 +27,16 @@ public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements 
 	public List<LicenseEntity> findAthleteByBibGenderAndBirthdayMinMax(String bib, Character gender, Date dateMin,
 			Date dateMax) {
 		List<Character> genders;
-		if (Character.valueOf('W').equals(gender)||Character.valueOf('F').equals(gender)){
+		if (gender==null){
+			genders=Arrays.asList('W','F','M','H');
+		}else if(Character.valueOf('W').equals(gender)||Character.valueOf('F').equals(gender)){
 			genders=Arrays.asList('W','F');
+		}else if (Character.valueOf('M').equals(gender)||Character.valueOf('H').equals(gender)){
+			genders=Arrays.asList('M','H');
 		}else{
 			genders=Arrays.asList(gender);
 		}
+
 		
 		EntityManager em = getEntityManager();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
