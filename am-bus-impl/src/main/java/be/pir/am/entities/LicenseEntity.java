@@ -2,6 +2,7 @@ package be.pir.am.entities;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +15,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "licenses")
 public class LicenseEntity extends BaseEntity {
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "athlete")
 	private AthleteEntity athlete;
 	@Temporal(TemporalType.TIMESTAMP)

@@ -7,4 +7,6 @@ import be.pir.am.entities.TeamEntity;
 @Local
 public interface TeamDao extends EntityDao<TeamEntity> {
 
+	TeamEntity getByFederationNumber(String federationNumber);
+
 }

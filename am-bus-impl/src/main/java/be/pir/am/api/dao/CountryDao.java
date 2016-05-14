@@ -6,5 +6,5 @@ import be.pir.am.entities.CountryEntity;
 
 @Local
 public interface CountryDao extends EntityDao<CountryEntity> {
-
+	CountryEntity getByIso3(String iso3);
 }
