@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,15 +66,18 @@ public class FileUpdateServiceImpl {
 		//read file in memory
 		//load all athlethes and licenses from database from licenses left join fetch athletes
 		//transform to map (based on field with a star (Map<String, Choice> result =
-		List<LicenseEntity> licenses = new ArrayList<>();
-		final Map<String, LicenseEntity> licensesMap = licenses.stream().collect(
-				Collectors.toMap(LicenseEntity::getLicensenumber, Function.identity())); //licenses.licensenumber
+
+		UpdateContext uc = new UpdateContext();
+		List<LicenseEntity> licenses = new ArrayList<>();//TODO : get all licenses
+		uc.setLicensesMap(licenses.stream().collect(
+				Collectors.toMap(LicenseEntity::getLicensenumber, Function.identity()))); //licenses.licensenumber
+
 		//TODO, do the same for : db_countries.iso3 and db_teams.federationnumber
 		try (Stream<String> recordLines = recreate(Files.lines(file.toPath(), StandardCharsets.UTF_8).skip(1)
 				.parallel())) {
 			recordLines.map(line -> line.trim())
 					.filter(line -> !line.isEmpty())
-					.forEach(line -> processLine(line, licensesMap));
+					.forEach(line -> processLine(line, uc));
 		} catch (IOException e) {
 			LOGGER.error("error in reading files", e);
 		}
@@ -100,17 +102,17 @@ public class FileUpdateServiceImpl {
 	 * if null, create new and persist
 	 * else set other fields : db_licenses.bib	db_licenses.id_for_federation	db_athletes.firstname	db_athletes.lastname	db_athletes.gender	db_athletes.birthdate	db_countries.iso3	db_teams.federationnumber
 	 */
-	private void processLine(String line, Map<String, LicenseEntity> licensesMap) {
+	private void processLine(String line, UpdateContext context) {
 		String[] split = line.split(SEPARATOR);
 		if (split.length != 9) {
 			LOGGER.error("Bad number of fields in line : " + line);
 			return;
 		}
-		LicenseEntity license = licensesMap.get(split[0]);
+		LicenseEntity license = context.getLicensesMap().get(split[0]);
 		if (license == null) {
 			license = new LicenseEntity();
 			license.setAthlete(new AthleteEntity());
-			//TODO : in first step create new license and athlete, in second step try to get athlète from firstname and last name and change his license Number
+			//TODO : perhaps athlete already exists with other license.
 		}
 
 		license.setBib(split[1]);
@@ -130,7 +132,7 @@ public class FileUpdateServiceImpl {
 		if (license.getId() == null) {
 			licenseDao.save(license);
 		}
-
+		context.incrementNumberOfLinesProcessedCounter();
 	}
 
 	//this method is to avoid bug in jre (fixed in Java8u60) : http://stackoverflow.com/questions/28259636/is-this-a-bug-in-files-lines-or-am-i-misunderstanding-something-about-paralle
