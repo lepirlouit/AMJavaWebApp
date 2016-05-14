@@ -1,0 +1,4 @@
+db_licenses.licensenumber*	db_licenses.bib	db_licenses.id_for_federation	db_athletes.firstname	db_athletes.lastname	db_athletes.gender	db_athletes.birthdate	db_countries.iso3	db_teams.federationnumber
+116115339655	6413	392625	Joseph	Piette	M	1943-09-02	BEL	31
+118414078189	6495	393466	Alain	Martin	M	1967-07-13	BEL	2
+118392935324	6496	393467	Marc	Jayankura	M	1962-06-13	BEL	2

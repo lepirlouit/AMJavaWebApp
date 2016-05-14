@@ -3,6 +3,7 @@ package be.pir.am.service;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -38,16 +39,29 @@ public class FileUpdateServiceImpl {
 	@EJB
 	private TeamDao teamDao;
 
-	public boolean updateAthletes(File file) {
+	public boolean updateFromWebBasicAuth(String url, String login, String password){
 		try {
-			URL website = new URL(
-					"http://AMTimetronics:Olen2014%3BLBFA@www.lbfa.be/extranet/exchange/AM_data/athletes.csv");
-			Files.copy(website.openStream(), File.createTempFile("athletes", ".csv").toPath(),
+			URL website = new URL(url);
+			File file = File.createTempFile("athletes", ".csv");
+			String loginPassword = login+ ":" + password;
+			String encoded = new sun.misc.BASE64Encoder().encode (loginPassword.getBytes());
+			URLConnection conn = website.openConnection();
+			conn.setRequestProperty ("Authorization", "Basic " + encoded);
+
+
+			Files.copy(conn.getInputStream(), file.toPath(),
 					StandardCopyOption.REPLACE_EXISTING);
+			boolean returnedValue = updateAthletes(file);
+			file.delete();
+			return returnedValue;
 		} catch (IOException e) {
 			LOGGER.error("error downloading file", e);
 			return false;
 		}
+	}
+
+	public boolean updateAthletes(File file) {
+
 
 		//read first line and validate 
 		//read file in memory
@@ -59,7 +73,9 @@ public class FileUpdateServiceImpl {
 		//TODO, do the same for : db_countries.iso3 and db_teams.federationnumber
 		try (Stream<String> recordLines = recreate(Files.lines(file.toPath(), StandardCharsets.UTF_8).skip(1)
 				.parallel())) {
-			recordLines.forEach(line -> processLine(line, licensesMap));
+			recordLines.map(line -> line.trim())
+					.filter(line -> !line.isEmpty())
+					.forEach(line -> processLine(line, licensesMap));
 		} catch (IOException e) {
 			LOGGER.error("error in reading files", e);
 		}
