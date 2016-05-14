@@ -23,7 +23,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 		<properties>
 			<!-- Properties for Hibernate -->
 <!-- 			<property name="hibernate.hbm2ddl.auto" value="validate" /> -->
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
 			<!--    <property name="hibernate.show_sql" value="true" /> -->
 			<!--    <property name="hibernate.format_sql" value="true" /> -->
 			<!--    <property name="hibernate.use_sql_comments" value="true" /> -->
