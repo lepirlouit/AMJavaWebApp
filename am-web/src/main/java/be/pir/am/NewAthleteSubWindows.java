@@ -36,7 +36,7 @@ public abstract class NewAthleteSubWindows extends Window {
 
 		AthleteDto athlete = new AthleteDto();
 
-		final BeanFieldGroup<AthleteDto> binder = new BeanFieldGroup<AthleteDto>(AthleteDto.class);
+		final BeanFieldGroup<AthleteDto> binder = new BeanFieldGroup<>(AthleteDto.class);
 		binder.setItemDataSource(athlete);
 		binder.setBuffered(true);
 
@@ -64,7 +64,7 @@ public abstract class NewAthleteSubWindows extends Window {
 		content.addComponent(birthdateField);
 
 		List<TeamDto> listAllTeams = athleteService.listAllTeams();
-		ComboBox cbxTeam = new ComboBox("Club", new BeanItemContainer<TeamDto>(TeamDto.class, listAllTeams));
+		ComboBox cbxTeam = new ComboBox("Club", new BeanItemContainer<>(TeamDto.class, listAllTeams));
 		cbxTeam.setItemCaptionPropertyId("name");
 		cbxTeam.setConverter(new Converter<Object, String>() {
 
@@ -81,7 +81,7 @@ public abstract class NewAthleteSubWindows extends Window {
 			}
 
 			@Override
-			public Object convertToPresentation(String value, Class<? extends Object> targetType, Locale locale)
+			public Object convertToPresentation(String value, Class<?> targetType, Locale locale)
 					throws com.vaadin.data.util.converter.Converter.ConversionException {
 				for (TeamDto teamDto : listAllTeams) {
 					if (teamDto.getName().equals(value)) {
