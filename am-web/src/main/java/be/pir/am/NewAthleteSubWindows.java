@@ -105,7 +105,7 @@ public abstract class NewAthleteSubWindows extends Window {
 		binder.bind(cbxTeam, "team");
 		content.addComponent(cbxTeam);
 
-		TextField dossardField = (TextField) binder.buildAndBind("Dossard", "bib");
+		TextField dossardField = (TextField) binder.buildAndBind("Dossard (facultatif)", "bib");
 		dossardField.setNullRepresentation("");
 		content.addComponent(dossardField);
 		content.setMargin(true);
