@@ -52,11 +52,12 @@ public class PrintPage extends WebPage {
 						athleteItem.add(new Label("teamShort"));
 						athleteItem.add(DateLabel.forDatePattern("birthdate", "dd/MM/yyyy"));
 						athleteItem.add(new Label("category"));
+						athleteItem.add(new Label("record"));
 					}
 				});
 				RepeatingView emptyLines = new RepeatingView("emptyLine");
 				for(int i=0 ;i<(30-subscribed);i++){
-					emptyLines.add(new Label(emptyLines.newChildId(),"<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>").setEscapeModelStrings(false));
+					emptyLines.add(new Label(emptyLines.newChildId(),"<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>").setEscapeModelStrings(false));
 				}
 				item.add(emptyLines);
 			}

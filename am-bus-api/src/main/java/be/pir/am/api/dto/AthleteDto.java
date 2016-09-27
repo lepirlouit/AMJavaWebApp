@@ -8,6 +8,7 @@ public class AthleteDto extends BaseDto {
 	private String bib;
 	private int licenseId;
 	private Character gender;
+	private String record;
 
 	public AthleteDto() {
 	}
@@ -93,6 +94,14 @@ public class AthleteDto extends BaseDto {
 
 	public String getDisplayName() {
 		return lastName + ", " + firstName;
+	}
+
+	public String getRecord() {
+		return record;
+	}
+
+	public void setRecord(String record) {
+		this.record = record;
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import be.pir.am.TimeConverterUtil;
 import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.api.dao.CategoryDao;
 import be.pir.am.api.dao.CompetitionDao;
@@ -331,6 +332,8 @@ public class AthleteServiceImpl implements AthleteService {
 			AthleteDto athlete = createAthleteDto(competitor);
 			for (ParticipationEntity participation : competitor.getParticipations()) {
 				athlete.setCategory(participation.getCategory().getName());
+				athlete.setRecord(TimeConverterUtil.convertRecordToString(recordDao.getBestRecordForAthleteAndEventType(new AthleteEntity(athlete.getId()),
+						participation.getRound().getEvent().getEventType()).getValue()));
 				EventDto event = createEventDto(participation.getRound().getEvent());
 				List<AthleteDto> participantsInMap = events.get(event);
 
