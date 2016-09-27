@@ -8,5 +8,6 @@ import be.pir.am.entities.LicenseEntity;
 
 @Local
 public interface LicenseDao extends EntityDao<LicenseEntity> {
+	List<LicenseEntity> findAllWithAthletesFetch();
 	List<LicenseEntity> findAthletesWithBib(String bib);
 }
