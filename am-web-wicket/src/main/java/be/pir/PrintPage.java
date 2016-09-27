@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.ejb.EJB;
 
+import be.pir.am.api.service.FileUpdateService;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
 import org.apache.wicket.markup.repeater.RepeatingView;
@@ -22,9 +24,21 @@ public class PrintPage extends WebPage {
 	private static final long serialVersionUID = 1L;
 	@EJB
 	private AthleteService athleteService;
+	@EJB
+	private FileUpdateService fileUpdateService;
 
 	public PrintPage(final PageParameters parameters) {
 		super(parameters);
+		add(new Link("updateDB") {
+			public void onClick() {
+				fileUpdateService.updateFromWebBasicAuth(
+						System.getProperty("athlete.file.url"),
+						System.getProperty("athlete.file.user"),
+						System.getProperty("athlete.file.password")
+				);
+			}
+		});
+
 		CompetitionDto competition = new CompetitionDto();
 		competition.setId(1);
 		List<EventDto> events = athleteService.getAllParticipations(competition);

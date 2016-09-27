@@ -38,4 +38,9 @@
 		<local>be.pir.am.api.service.AthleteService</local>
 		<ejb-link>AthleteServiceImpl</ejb-link>
 	</ejb-local-ref>
+	<ejb-local-ref>
+		<ejb-ref-name>be.pir.am.api.service.FileUpdateService</ejb-ref-name>
+		<local>be.pir.am.api.service.FileUpdateService</local>
+		<ejb-link>FileUpdateServiceImpl</ejb-link>
+	</ejb-local-ref>
 </web-app>

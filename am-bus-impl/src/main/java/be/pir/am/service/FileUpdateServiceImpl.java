@@ -17,7 +17,13 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
+import be.pir.am.api.dao.AthleteDao;
+import be.pir.am.api.service.FileUpdateService;
+import be.pir.am.entities.TeamEntity;
 import org.apache.log4j.Logger;
 
 import be.pir.am.api.dao.CountryDao;
@@ -26,18 +32,24 @@ import be.pir.am.api.dao.TeamDao;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.LicenseEntity;
 
-public class FileUpdateServiceImpl {
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class FileUpdateServiceImpl implements FileUpdateService {
 	private static final Logger LOGGER = Logger.getLogger(FileUpdateServiceImpl.class);
 	private static final String SEPARATOR = "\t";
 	private static final String DATE_PATTERN = "yyyy-MM-dd";
 
+
 	@EJB
 	private LicenseDao licenseDao;
+	@EJB
+	private AthleteDao athleteDao;
 	@EJB
 	private CountryDao countryDao;
 	@EJB
 	private TeamDao teamDao;
 
+	@Override
 	public boolean updateFromWebBasicAuth(String url, String login, String password){
 		try {
 			URL website = new URL(url);
@@ -59,6 +71,7 @@ public class FileUpdateServiceImpl {
 		}
 	}
 
+	@Override
 	public boolean updateAthletes(File file) {
 
 
@@ -68,7 +81,7 @@ public class FileUpdateServiceImpl {
 		//transform to map (based on field with a star (Map<String, Choice> result =
 
 		UpdateContext uc = new UpdateContext();
-		List<LicenseEntity> licenses = new ArrayList<>();//TODO : get all licenses
+		List<LicenseEntity> licenses = licenseDao.findAllWithAthletesFetch();
 		uc.setLicensesMap(licenses.stream().collect(
 				Collectors.toMap(LicenseEntity::getLicensenumber, Function.identity()))); //licenses.licensenumber
 
@@ -81,7 +94,7 @@ public class FileUpdateServiceImpl {
 		} catch (IOException e) {
 			LOGGER.error("error in reading files", e);
 		}
-
+		LOGGER.debug(uc.getNumberOfLinesProcessedCounter());
 		return true;
 	}
 
@@ -111,6 +124,7 @@ public class FileUpdateServiceImpl {
 		LicenseEntity license = context.getLicensesMap().get(split[0]);
 		if (license == null) {
 			license = new LicenseEntity();
+		    license.setLicensenumber(split[0]);
 			license.setAthlete(new AthleteEntity());
 			//TODO : perhaps athlete already exists with other license.
 		}
@@ -127,12 +141,22 @@ public class FileUpdateServiceImpl {
 			return;
 		}
 		license.getAthlete().setNationality(countryDao.getByIso3(split[7]));
-		license.setTeam(teamDao.getByFederationNumber(split[8]));
-
-		if (license.getId() == null) {
-			licenseDao.save(license);
+		String federationNumber = split[8];
+		if(!"0".equals(federationNumber)) {
+			license.setTeam(teamDao.getByFederationNumber(federationNumber));
 		}
+
+		if (license.getTeam() == null) {
+			license.setTeam(new TeamEntity(0));
+		}
+		licenseDao.save(license);
+
 		context.incrementNumberOfLinesProcessedCounter();
+		if(LOGGER.isDebugEnabled()) {
+			if(context.getNumberOfLinesProcessedCounter()%100 == 0){
+				LOGGER.debug(context.getNumberOfLinesProcessedCounter());
+			}
+		}
 	}
 
 	//this method is to avoid bug in jre (fixed in Java8u60) : http://stackoverflow.com/questions/28259636/is-this-a-bug-in-files-lines-or-am-i-misunderstanding-something-about-paralle

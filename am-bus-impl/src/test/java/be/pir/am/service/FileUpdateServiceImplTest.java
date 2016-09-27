@@ -1,5 +1,6 @@
 package be.pir.am.service;
 
+import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.api.dao.CountryDao;
 import be.pir.am.api.dao.LicenseDao;
 import be.pir.am.api.dao.TeamDao;
@@ -30,6 +31,8 @@ public class FileUpdateServiceImplTest{
     private CountryDao countryDao;
     @Mock
     private TeamDao teamDao;
+    @Mock
+    private AthleteDao athleteDao;
 
     @InjectMocks
     private FileUpdateServiceImpl beanToTest;
@@ -87,6 +90,7 @@ public class FileUpdateServiceImplTest{
         boolean returnedValue = beanToTest.updateAthletes(inputCsvFile);
 
         Mockito.verify(countryDao,Mockito.times(33463)).getByIso3("BEL");
+        Mockito.verify(teamDao,Mockito.times(375)).getByFederationNumber("1423");
         Mockito.verify(teamDao,Mockito.times(33463)).getByFederationNumber(Mockito.anyString());
         Mockito.verify(licenseDao,Mockito.times(33463)).save(Mockito.any(LicenseEntity.class));
         Assert.assertEquals(true, returnedValue);

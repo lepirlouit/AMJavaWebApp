@@ -23,6 +23,13 @@ public class TeamEntity extends BaseEntity {
 	@Column(length = 64)
 	private String place;
 
+	public TeamEntity() {
+	}
+
+	public TeamEntity(Integer id) {
+		super(id);
+	}
+
 	public FederationEntity getFederation() {
 		return federation;
 	}
