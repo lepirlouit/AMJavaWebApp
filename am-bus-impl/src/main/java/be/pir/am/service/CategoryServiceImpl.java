@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
         return returnedList;
     }
 
-    CategoryDto createCategoryDto(CategoryEntity categoryEntity) {
+    public static CategoryDto createCategoryDto(CategoryEntity categoryEntity) {
         CategoryDto category = new CategoryDto();
         category.setAbbreviation(categoryEntity.getAbbreviation());
         category.setName(categoryEntity.getName());
