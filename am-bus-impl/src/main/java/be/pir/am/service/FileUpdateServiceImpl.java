@@ -8,8 +8,7 @@ import be.pir.am.entities.LicenseEntity;
 import org.apache.log4j.Logger;
 
 import javax.ejb.EJB;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -18,9 +17,9 @@ import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -67,20 +66,37 @@ public class FileUpdateServiceImpl {
 
         UpdateContext uc = new UpdateContext();
         List<LicenseEntity> licenses = new ArrayList<>();//TODO : get all licenses
-        uc.setLicensesMap(licenses.stream().collect(
-                Collectors.toMap(LicenseEntity::getLicensenumber, Function.identity()))); //licenses.licensenumber
+        Map<String, LicenseEntity> map = new HashMap<>();
+        for (LicenseEntity licens : licenses) {
+            if (map.put(licens.getLicensenumber(), licens) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+        }
+        uc.setLicensesMap(map); //licenses.licensenumber
 
         //TODO, do the same for : db_countries.iso3 and db_teams.federationnumber
-        try (Stream<String> recordLines = recreate(Files.lines(file.toPath(), StandardCharsets.UTF_8).skip(1)
-                .parallel())) {
-            recordLines.map(line -> line.trim())
-                    .filter(line -> !line.isEmpty())
-                    .forEach(line -> processLine(line, uc));
-        } catch (IOException e) {
+        try (FileInputStream fstream = new FileInputStream(file);
+             DataInputStream in = new DataInputStream(fstream);
+             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));) {
+            // Open the file that is the first
+            // command line parameter
+
+            String strLine;
+            //skip first line :
+            br.readLine();
+            //Read File Line By Line
+            while ((strLine = br.readLine()) != null) {
+                processLine(strLine, uc);
+            }
+            //Close the input stream
+
+            return true;
+        } catch (IOException e) {//Catch exception if any
+            System.err.println("Error: " + e.getMessage());
             LOGGER.error("error in reading files", e);
+            return false;
         }
 
-        return true;
     }
 
 	/*
@@ -133,10 +149,4 @@ public class FileUpdateServiceImpl {
         }
         context.incrementNumberOfLinesProcessedCounter();
     }
-
-    //this method is to avoid bug in jre (fixed in Java8u60) : http://stackoverflow.com/questions/28259636/is-this-a-bug-in-files-lines-or-am-i-misunderstanding-something-about-paralle
-    private static <T> Stream<T> recreate(Stream<T> stream) {
-        return StreamSupport.stream(stream.spliterator(), stream.isParallel()).onClose(stream::close);
-    }
-
 }

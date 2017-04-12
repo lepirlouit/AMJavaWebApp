@@ -4,6 +4,7 @@ import be.pir.am.api.dao.RecordDao;
 import be.pir.am.entities.AthleteEntity;
 import be.pir.am.entities.EventTypeEntity;
 import be.pir.am.entities.RecordEntity;
+import be.pir.am.entities.RecordEntity_;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+import java.math.BigDecimal;
 
 @Stateless
 public class RecordDaoImpl extends AbstractEntityDao<RecordEntity> implements RecordDao {
@@ -25,9 +27,9 @@ public class RecordDaoImpl extends AbstractEntityDao<RecordEntity> implements Re
         EntityManager em = getEntityManager();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<RecordEntity> cq = cb.createQuery(RecordEntity.class);
-        Subquery<Double> subquery = cq.subquery(Double.class);
+        Subquery<BigDecimal> subquery = cq.subquery(BigDecimal.class);
         Root<RecordEntity> subrecord = subquery.from(RecordEntity.class);
-        subquery.select(cb.min(subrecord.get("value"))).where(cb.equal(subrecord.get("athlete"), athlete),
+        subquery.select(cb.min(subrecord.get(RecordEntity_.value))).where(cb.equal(subrecord.get("athlete"), athlete),
                 cb.equal(subrecord.get("eventtype"), eventType));
 
         Root<RecordEntity> record = cq.from(RecordEntity.class);

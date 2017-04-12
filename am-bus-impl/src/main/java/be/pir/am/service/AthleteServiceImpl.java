@@ -11,9 +11,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+
 import java.util.*;
 
 @Stateless
@@ -68,10 +68,8 @@ public class AthleteServiceImpl implements AthleteService {
         if (maximumAge == 0) {
             maximumAge = 99;
         }
-        Date dateMin = Date.from(LocalDate.of(LocalDate.now().getYear() - maximumAge, 1, 1).atStartOfDay()
-                .atZone(ZoneId.systemDefault()).toInstant());
-        Date dateMax = Date.from(LocalDate.of(LocalDate.now().getYear() - minimumAge, 12, 31).atStartOfDay()
-                .atZone(ZoneId.systemDefault()).toInstant());
+        Date dateMin = new LocalDate(LocalDate.now().getYear() - maximumAge, 1, 1).toDate();
+        Date dateMax = new LocalDate(LocalDate.now().getYear() - minimumAge, 12, 31).toDate();
 
         List<LicenseEntity> results = athleteDao.findAthleteByBibGenderAndBirthdayMinMax(String.valueOf(bib),
                 gender, dateMin, dateMax);
@@ -133,7 +131,13 @@ public class AthleteServiceImpl implements AthleteService {
                 }
             }
         }
-        events.sort(Comparator.comparing(o -> o.getRounds().get(0).getTimeScheduled()));
+		Collections.sort(events, new Comparator<EventEntity>() {
+
+			@Override
+			public int compare(EventEntity o1, EventEntity o2) {
+				return o1.getRounds().get(0).getTimeScheduled().compareTo(o2.getRounds().get(0).getTimeScheduled());
+			}
+		});
 
         for (EventEntity event : events) {
             EventDto e = new EventDto();
@@ -164,11 +168,11 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     private List<CategoryEntity> getCategoryForAthlete(CompetitionDto competition, Character gender, Date birthDate) {
-        LocalDate endOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+        LocalDate endOfYear = new LocalDate(LocalDate.now().getYear(), 12, 31);
         //TODO : in place of currentDate, take the end of year of the competition date
-        LocalDate birthday = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate birthday = LocalDate.fromDateFields(birthDate);
 
-        Period p = Period.between(birthday, endOfYear);
+        Period p = Period.fieldDifference(birthday, endOfYear);
 
         return categoryDao.findCategoriesByGenderFederationAndAge(gender,
                 new FederationEntity(competition.getFederationId()), (short) p.getYears());
@@ -194,7 +198,7 @@ public class AthleteServiceImpl implements AthleteService {
                 athlete.setId(athleteEntity.getId());
                 competitor.setAthlete(athleteEntity);
             }
-            competitor.setParticipations(new ArrayList<>());
+            competitor.setParticipations(new ArrayList<ParticipationEntity>());
             competitor.setCompetition(new CompetitionEntity(competition.getId()));
             competitor.setBib(athlete.getBib());
             if (athlete.getLicenseId() != 0)
@@ -299,12 +303,24 @@ public class AthleteServiceImpl implements AthleteService {
 
         ArrayList<EventDto> eventsList = new ArrayList<>(events.keySet());
         //order each participantsList (in events) (by name)
-        Comparator<AthleteDto> eventsComparator = Comparator.comparing(AthleteDto::getLastName);
+		Comparator<AthleteDto> eventsComparator = new Comparator<AthleteDto>() {
+
+			@Override
+			public int compare(AthleteDto o1, AthleteDto o2) {
+				return o1.getLastName().compareTo(o2.getLastName());
+			}
+		};
         for (EventDto eventDto : eventsList) {
-            eventDto.getParticipants().sort(eventsComparator);
+            Collections.sort(eventDto.getParticipants(),eventsComparator);
         }
         //order EventsList by EventNumber
-        eventsList.sort(Comparator.comparingInt(EventDto::getNumber));
+		Collections.sort(eventsList, new Comparator<EventDto>() {
+
+			@Override
+			public int compare(EventDto o1, EventDto o2) {
+				return o1.getNumber() - o2.getNumber();
+			}
+		});
         return eventsList;
     }
 

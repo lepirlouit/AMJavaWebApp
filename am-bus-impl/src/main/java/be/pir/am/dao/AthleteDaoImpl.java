@@ -2,7 +2,9 @@ package be.pir.am.dao;
 
 import be.pir.am.api.dao.AthleteDao;
 import be.pir.am.entities.AthleteEntity;
+import be.pir.am.entities.AthleteEntity_;
 import be.pir.am.entities.LicenseEntity;
+import be.pir.am.entities.LicenseEntity_;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,9 +41,9 @@ public class AthleteDaoImpl extends AbstractEntityDao<AthleteEntity> implements 
 
         CriteriaQuery<LicenseEntity> cq = cb.createQuery(LicenseEntity.class);
         Root<LicenseEntity> license = cq.from(LicenseEntity.class);
-        Join<Object, Object> athlete = license.join("athlete", JoinType.LEFT);
+        Join<LicenseEntity, AthleteEntity> athlete = license.join(LicenseEntity_.athlete, JoinType.LEFT);
 //		cq.select(license.get("athlete"));
-        cq.where(cb.between(athlete.get("birthdate"), dateMin, dateMax), athlete.get("gender").in(genders),
+        cq.where(cb.between(athlete.get(AthleteEntity_.birthdate), dateMin, dateMax), athlete.get(AthleteEntity_.gender).in(genders),
                 cb.equal(license.get("bib"), bib));
         return em.createQuery(cq).getResultList();
     }
