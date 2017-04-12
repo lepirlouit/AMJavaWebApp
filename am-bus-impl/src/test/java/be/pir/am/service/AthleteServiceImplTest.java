@@ -8,12 +8,11 @@ import be.pir.am.entities.*;
 import com.bm.testsuite.BaseSessionBeanFixture;
 import junit.framework.Assert;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Period;
+
+import java.util.Collections;
 import java.util.List;
 
 public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServiceImpl> {
@@ -46,13 +45,11 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
         Assert.assertNotNull(competition);
         AthleteEntity athlete = getEntityManager().find(AthleteEntity.class, 1026601);
         Assert.assertNotNull(athlete);
-        LocalDate res = LocalDateTime.ofInstant(Instant.ofEpochMilli(athlete.getBirthdate().getTime()),
-                ZoneId.systemDefault()).toLocalDate();
-        LocalDate now = LocalDate.of(
-                LocalDateTime
-                        .ofInstant(Instant.ofEpochMilli(competition.getStartDate().getTime()), ZoneId.systemDefault())
-                        .toLocalDate().getYear(), 12, 31);
-        long years = ChronoUnit.YEARS.between(res, now);
+        LocalDate res = LocalDate.fromDateFields(athlete.getBirthdate());
+        LocalDate now = new LocalDate(
+                LocalDateTime.fromDateFields(competition.getStartDate())
+                        .getYear(), 12, 31);
+        long years = Period.fieldDifference(res, now).getYears();
 
         //get category by Gender, federation, age
         //get competition events by category
@@ -85,17 +82,20 @@ public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServic
         athlete.setLicenseId(1026657);
         athlete.setFirstName("UnitTest");
         athlete.setLastName("Ejb3Unit");
+        athlete.setBirthdate(new LocalDate(1989,11,15).toDate());
+        athlete.setGender('F');
 
         CompetitionDto competition = new CompetitionDto();
-        competition.setId(71);
+        competition.setId(1);
+        competition.setFederationId(10);
         EventDto event = new EventDto();
-        event.setId(3);
+        event.setId(21);
         CategoryDto category = new CategoryDto();
         category.setId(58);
 
         final AthleteServiceImpl toTest = this.getBeanToTest();
 
-        toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
+        toTest.subscribeAthleteToEvents(athlete, Collections.singletonList(event), category, competition);
 
     }
 
