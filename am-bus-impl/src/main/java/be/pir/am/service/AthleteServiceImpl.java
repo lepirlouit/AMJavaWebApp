@@ -12,6 +12,7 @@ import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
 
 import java.util.*;
@@ -338,7 +339,7 @@ public class AthleteServiceImpl implements AthleteService {
         EventDto eventDto = new EventDto();
         eventDto.setName(event.getName());
         eventDto.setNumber(event.getNumber());
-        eventDto.setHour(new SimpleDateFormat("HH:mm").format(new LocalDate(event.getRounds().get(0).getTimeScheduled()).toDate()));
+        eventDto.setHour(new SimpleDateFormat("HH:mm").format(new LocalDateTime(event.getRounds().get(0).getTimeScheduled()).toDate()));
         eventDto.setAbbreviation(event.getAbbreviation());
         return eventDto;
     }
