@@ -11,6 +11,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
@@ -327,12 +329,22 @@ public class AthleteServiceImpl implements AthleteService {
 
     private CategoryEntity getMasterCategoryForEvent(EventEntity eventEntity) {
         //if contains TC then TC otherwise the first
+        List<String> categoryNames = new ArrayList<>();
         for (CategoryEntity categoryEntity : eventEntity.getCategories()) {
             if (categoryEntity.getAbbreviation().startsWith("TC")) {
                 return categoryEntity;
+            }else {
+                categoryNames.add(categoryEntity.getName());
             }
         }
-        return eventEntity.getCategories().iterator().next();
+        CategoryEntity aCategory = eventEntity.getCategories().iterator().next();
+        CategoryEntity fakeCategory = new CategoryEntity();
+        fakeCategory.setName(StringUtils.join(categoryNames, ", "));
+        /*fakeCategory.setId(null);
+        fakeCategory.setGender(aCategory.getGender());
+        fakeCategory.setFederation(aCategory.getFederation());
+        fakeCategory.set*/
+        return fakeCategory;
     }
 
     private EventDto createEventDto(EventEntity event) {
