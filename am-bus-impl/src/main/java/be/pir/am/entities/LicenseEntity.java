@@ -1,5 +1,8 @@
 package be.pir.am.entities;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -15,6 +18,7 @@ public class LicenseEntity extends BaseEntity {
     private Date enddate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team")
+    @NotFound(action = NotFoundAction.IGNORE)
     private TeamEntity team;
     private String licensenumber;
     private String bib;

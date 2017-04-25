@@ -4,6 +4,10 @@ import be.pir.am.api.dao.*;
 import be.pir.am.api.dto.*;
 import be.pir.am.api.service.AthleteService;
 import be.pir.am.entities.*;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Period;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -11,12 +15,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Period;
-
 import java.util.*;
 
 @Stateless
@@ -89,8 +87,10 @@ public class AthleteServiceImpl implements AthleteService {
         athDto.setLicenseId(license.getId());
         athDto.setId(license.getAthlete().getId());
         athDto.setBib(license.getBib());
-        athDto.setTeam(license.getTeam().getName());
-        athDto.setTeamShort(license.getTeam().getAbbreviation());
+        if (license.getTeam() != null) {
+            athDto.setTeam(license.getTeam().getName());
+            athDto.setTeamShort(license.getTeam().getAbbreviation());
+        }
         athDto.setGender(athlete.getGender());
         return athDto;
     }
@@ -102,7 +102,7 @@ public class AthleteServiceImpl implements AthleteService {
         athDto.setLicenseId(competitor.getId());
         athDto.setId(competitor.getAthlete().getId());
         athDto.setBib(competitor.getBib());
-        if (competitor.getLicense() != null) {
+        if (competitor.getLicense() != null && competitor.getLicense().getTeam() != null) {
             athDto.setTeam(competitor.getLicense().getTeam().getName());
             athDto.setTeamShort(competitor.getLicense().getTeam().getAbbreviation());
         }
