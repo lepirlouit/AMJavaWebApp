@@ -1,127 +1,115 @@
 package be.pir.am.service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-
-import junit.framework.Assert;
 import be.pir.am.api.dto.AthleteDto;
 import be.pir.am.api.dto.CategoryDto;
 import be.pir.am.api.dto.CompetitionDto;
 import be.pir.am.api.dto.EventDto;
-import be.pir.am.entities.AthleteEntity;
-import be.pir.am.entities.CategoryEntity;
-import be.pir.am.entities.CompetitionEntity;
-import be.pir.am.entities.CompetitorEntity;
-import be.pir.am.entities.CountryEntity;
-import be.pir.am.entities.EventEntity;
-import be.pir.am.entities.EventTypeEntity;
-import be.pir.am.entities.FederationEntity;
-import be.pir.am.entities.LicenseEntity;
-import be.pir.am.entities.ParticipationEntity;
-import be.pir.am.entities.RoundEntity;
-import be.pir.am.entities.TeamEntity;
-
+import be.pir.am.entities.*;
 import com.bm.testsuite.BaseSessionBeanFixture;
+import junit.framework.Assert;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Period;
+
+import java.util.Collections;
+import java.util.List;
 
 public class AthleteServiceImplTest extends BaseSessionBeanFixture<AthleteServiceImpl> {
-	private static final Class<?>[] usedBeans = { AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
-			TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
-			CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class,
-			EventTypeEntity.class};
+    private static final Class<?>[] usedBeans = {AthleteEntity.class, CountryEntity.class, LicenseEntity.class,
+            TeamEntity.class, FederationEntity.class, CategoryEntity.class, CompetitionEntity.class,
+            CompetitorEntity.class, EventEntity.class, ParticipationEntity.class, RoundEntity.class,
+            EventTypeEntity.class};
 
-	/**
-	 * Constructor.
-	 */
-	public AthleteServiceImplTest() {
-		super(AthleteServiceImpl.class, usedBeans);
-	}
+    /**
+     * Constructor.
+     */
+    public AthleteServiceImplTest() {
+        super(AthleteServiceImpl.class, usedBeans);
+    }
 
-	/**
-	 * Test the dpendency injection.
-	 * 
-	 * @author Daniel Wiese
-	 * @since 08.11.2005
-	 */
-	public void testDependencyInjectionWithMethodInvokation() {
-		final AthleteServiceImpl toTest = this.getBeanToTest();
-		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBib(500);
-		Assert.assertEquals(12, findAthletesByBib.size());
-	}
+    /**
+     * Test the dpendency injection.
+     *
+     * @author Daniel Wiese
+     * @since 08.11.2005
+     */
+    public void testDependencyInjectionWithMethodInvokation() {
+        final AthleteServiceImpl toTest = this.getBeanToTest();
+        List<AthleteDto> findAthletesByBib = toTest.findAthletesByBib(500);
+        Assert.assertEquals(12, findAthletesByBib.size());
+    }
 
-	public void testFindEvents() {
-		CompetitionEntity competition = getEntityManager().find(CompetitionEntity.class, 71);
-		Assert.assertNotNull(competition);
-		AthleteEntity athlete = getEntityManager().find(AthleteEntity.class, 1026601);
-		Assert.assertNotNull(athlete);
-		LocalDate res = LocalDateTime.ofInstant(Instant.ofEpochMilli(athlete.getBirthdate().getTime()),
-				ZoneId.systemDefault()).toLocalDate();
-		LocalDate now = LocalDate.of(
-				LocalDateTime
-						.ofInstant(Instant.ofEpochMilli(competition.getStartDate().getTime()), ZoneId.systemDefault())
-						.toLocalDate().getYear(), 12, 31);
-		long years = ChronoUnit.YEARS.between(res, now);
+    public void testFindEvents() {
+        CompetitionEntity competition = getEntityManager().find(CompetitionEntity.class, 71);
+        Assert.assertNotNull(competition);
+        AthleteEntity athlete = getEntityManager().find(AthleteEntity.class, 1026601);
+        Assert.assertNotNull(athlete);
+        LocalDate res = LocalDate.fromDateFields(athlete.getBirthdate());
+        LocalDate now = new LocalDate(
+                LocalDateTime.fromDateFields(competition.getStartDate())
+                        .getYear(), 12, 31);
+        long years = Period.fieldDifference(res, now).getYears();
 
-		//get category by Gender, federation, age
-		//get competition events by category
+        //get category by Gender, federation, age
+        //get competition events by category
 
-		System.out.println(years);
-		System.out.println(athlete.getBirthdate());
-		System.out.println(competition.getStartDate());
-		System.out.println(competition.getFederation().getName());
-		System.out.println(competition.getEvents().size());
-	}
+        System.out.println(years);
+        System.out.println(athlete.getBirthdate());
+        System.out.println(competition.getStartDate());
+        System.out.println(competition.getFederation().getName());
+        System.out.println(competition.getEvents().size());
+    }
 
-	public void testFindAthletesByBibAndCategory() {
-		final AthleteServiceImpl toTest = this.getBeanToTest();
-		CategoryDto category = new CategoryDto();
-		category.setMinimumAge((short) 20);
-		category.setMaximumAge((short) 35);
-		category.setGender('W');
+    public void testFindAthletesByBibAndCategory() {
+        final AthleteServiceImpl toTest = this.getBeanToTest();
+        CategoryDto category = new CategoryDto();
+        category.setMinimumAge((short) 20);
+        category.setMaximumAge((short) 35);
+        category.setGender('W');
 
-		List<AthleteDto> findAthletesByBib = toTest.findAthletesByBibAndCategory(927, category);
-		for (AthleteDto athleteDto : findAthletesByBib) {
-			System.out.println(athleteDto.getLastName());
-		}
-		Assert.assertEquals(2, findAthletesByBib.size());
-	}
+        List<AthleteDto> findAthletesByBib = toTest.findAthletesByBibAndCategory(927, category);
+        for (AthleteDto athleteDto : findAthletesByBib) {
+            System.out.println(athleteDto.getLastName());
+        }
+        Assert.assertEquals(2, findAthletesByBib.size());
+    }
 
-	public void testSubscribeAthleteToEvents() {
-		AthleteDto athlete = new AthleteDto();
-		athlete.setId(1026657);//sarah
-		athlete.setBib("927");
-		athlete.setLicenseId(1026657);
-		athlete.setFirstName("UnitTest");
-		athlete.setLastName("Ejb3Unit");
+    public void testSubscribeAthleteToEvents() {
+        AthleteDto athlete = new AthleteDto();
+        athlete.setId(1026657);//sarah
+        athlete.setBib("927");
+        athlete.setLicenseId(1026657);
+        athlete.setFirstName("UnitTest");
+        athlete.setLastName("Ejb3Unit");
+        athlete.setBirthdate(new LocalDate(1989,11,15).toDate());
+        athlete.setGender('F');
 
-		CompetitionDto competition = new CompetitionDto();
-		competition.setId(71);
-		EventDto event = new EventDto();
-		event.setId(3);
-		CategoryDto category = new CategoryDto();
-		category.setId(58);
+        CompetitionDto competition = new CompetitionDto();
+        competition.setId(1);
+        competition.setFederationId(10);
+        EventDto event = new EventDto();
+        event.setId(21);
+        CategoryDto category = new CategoryDto();
+        category.setId(58);
 
-		final AthleteServiceImpl toTest = this.getBeanToTest();
+        final AthleteServiceImpl toTest = this.getBeanToTest();
 
-		toTest.subscribeAthleteToEvents(athlete, Arrays.asList(event), category, competition);
+        toTest.subscribeAthleteToEvents(athlete, Collections.singletonList(event), category, competition);
 
-	}
+    }
 
-	public void testFindAllCompetitors() {
-		CompetitionDto competition = new CompetitionDto();
-		competition.setId(71);
-		final AthleteServiceImpl toTest = this.getBeanToTest();
-		List<EventDto> allParticipations = toTest.getAllParticipations(competition);
-		for (EventDto eventDto : allParticipations) {
-			System.out.println(eventDto);
-			for (AthleteDto athleteDto : eventDto.getParticipants()) {
-				System.out.println(athleteDto);
-			}
-		}
-	}
+    public void testFindAllCompetitors() {
+        CompetitionDto competition = new CompetitionDto();
+        competition.setId(71);
+        final AthleteServiceImpl toTest = this.getBeanToTest();
+        List<EventDto> allParticipations = toTest.getAllParticipations(competition);
+        for (EventDto eventDto : allParticipations) {
+            System.out.println(eventDto);
+            for (AthleteDto athleteDto : eventDto.getParticipants()) {
+                System.out.println(athleteDto);
+            }
+        }
+    }
 
 }
