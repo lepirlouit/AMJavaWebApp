@@ -1,12 +1,12 @@
 package be.pir.am.api.dao;
 
-import javax.ejb.Local;
-
 import be.pir.am.entities.TeamEntity;
+
+import javax.ejb.Local;
 
 @Local
 public interface TeamDao extends EntityDao<TeamEntity> {
 
-	TeamEntity getByFederationNumber(String federationNumber);
+    TeamEntity getByFederationNumber(String federationNumber);
 
 }

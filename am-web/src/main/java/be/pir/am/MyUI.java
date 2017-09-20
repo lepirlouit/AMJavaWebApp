@@ -106,7 +106,7 @@ public class MyUI extends UI {
 		searchForm.setSpacing(true);
 		layout.addComponent(searchForm);
 
-		ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
+		final ObjectProperty<Integer> bibProperty = new ObjectProperty<Integer>(null, Integer.class);
 		TextField bib = new TextField("Dossard/Bib", bibProperty);
 		bib.setNullRepresentation("");
 
@@ -175,10 +175,10 @@ public class MyUI extends UI {
 
 	}
 
-	private void displayPanelForAthlete(AthleteDto selectedAthlete) {
+	private void displayPanelForAthlete(final AthleteDto selectedAthlete) {
 		LOGGER.info("Selected in table : " + selectedAthlete);
 		if (selectedAthlete != null) {
-			List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
+			final List<EventDto> eventsList = athleteService.findEventsForAthlete(selectedAthlete, competition);
 			VerticalLayout gl = new VerticalLayout();
 			gl.addComponent(new Label(selectedAthlete.getFirstName() + ' ' + selectedAthlete.getLastName() + " - "
 					+ DateFormat.getDateInstance(DateFormat.MEDIUM).format(selectedAthlete.getBirthdate()) + " ("
@@ -187,7 +187,7 @@ public class MyUI extends UI {
 				gl.addComponent(new Label("Il n'y a pas de courses, ni concours, pour toi, à cette compétition."));
 			} else {
 
-				Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
+				final Set<BeanFieldGroup<EventDto>> binders = new HashSet<>();
 				for (EventDto event : eventsList) {
 					HorizontalLayout eventLyt = new HorizontalLayout();
 					eventLyt.setSpacing(true);

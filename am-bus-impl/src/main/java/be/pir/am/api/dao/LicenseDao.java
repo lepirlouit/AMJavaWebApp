@@ -1,12 +1,11 @@
 package be.pir.am.api.dao;
 
-import java.util.List;
+import be.pir.am.entities.LicenseEntity;
 
 import javax.ejb.Local;
-
-import be.pir.am.entities.LicenseEntity;
+import java.util.List;
 
 @Local
 public interface LicenseDao extends EntityDao<LicenseEntity> {
-	List<LicenseEntity> findAthletesWithBib(String bib);
+    List<LicenseEntity> findAthletesWithBib(String bib);
 }

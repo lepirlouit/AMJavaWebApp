@@ -34,7 +34,7 @@ public abstract class NewAthleteSubWindows extends Window {
 		super("Inscription Nouvel Athlète"); // Set window caption
 		center();
 
-		AthleteDto athlete = new AthleteDto();
+		final AthleteDto athlete = new AthleteDto();
 
 		final BeanFieldGroup<AthleteDto> binder = new BeanFieldGroup<>(AthleteDto.class);
 		binder.setItemDataSource(athlete);
@@ -63,7 +63,7 @@ public abstract class NewAthleteSubWindows extends Window {
 		birthdateField.setDateFormat("dd-MM-yyyy");
 		content.addComponent(birthdateField);
 
-		List<TeamDto> listAllTeams = athleteService.listAllTeams();
+		final List<TeamDto> listAllTeams = athleteService.listAllTeams();
 		ComboBox cbxTeam = new ComboBox("Club", new BeanItemContainer<>(TeamDto.class, listAllTeams));
 		cbxTeam.setItemCaptionPropertyId("name");
 		cbxTeam.setConverter(new Converter<Object, String>() {
