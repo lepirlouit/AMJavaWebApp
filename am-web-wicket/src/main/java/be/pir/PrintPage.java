@@ -56,7 +56,7 @@ public class PrintPage extends WebPage {
 					}
 				});
 				RepeatingView emptyLines = new RepeatingView("emptyLine");
-				for(int i=0 ;i<(30-subscribed);i++){
+				for(int i=0 ;i<(50-subscribed);i++){
 					emptyLines.add(new Label(emptyLines.newChildId(),"<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>").setEscapeModelStrings(false));
 				}
 				item.add(emptyLines);
