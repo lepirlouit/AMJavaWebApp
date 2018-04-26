@@ -381,13 +381,18 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     private CategoryEntity getMasterCategoryForEvent(EventEntity eventEntity) {
-        //if contains TC then TC otherwise the first
+        //if contains TC then TC otherwise dummy with the name of all
+        StringBuilder sb = new StringBuilder();
         for (CategoryEntity categoryEntity : eventEntity.getCategories()) {
+            if (!categoryEntity.getName().startsWith("Masters")) sb.append(categoryEntity.getName()).append(", ");
             if (categoryEntity.getAbbreviation().startsWith("TC")) {
                 return categoryEntity;
             }
         }
-        return eventEntity.getCategories().iterator().next();
+        CategoryEntity dummyCe = new CategoryEntity();
+        dummyCe.setName(sb.toString());
+
+        return dummyCe;
     }
 
     private EventDto createEventDto(EventEntity event) {
