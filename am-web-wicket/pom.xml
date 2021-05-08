@@ -27,7 +27,7 @@
 	<packaging>war</packaging>
 	<name>am-web-wicket</name>
 	<properties>
-		<wicket.version>7.3.0</wicket.version>
+		<wicket.version>7.17.0</wicket.version>
 		<jetty9.version>[9.4.12.v20180830,)</jetty9.version>
 		<log4j.version>2.13.3</log4j.version>
 		<junit.version>4.13.1</junit.version>
